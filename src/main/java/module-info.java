@@ -11,6 +11,7 @@ module com.example.deadlockdetection {
     requires eu.hansolo.tilesfx;
     requires com.google.common;
     requires json.lib;
+    requires atlantafx.base;
 
     opens com.example.deadlockdetection to javafx.fxml;
     exports com.example.deadlockdetection;
