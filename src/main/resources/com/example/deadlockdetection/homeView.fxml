@@ -25,6 +25,6 @@
       </MenuBar>
    </top>
    <center>
-      <Canvas fx:id="canvas" height="470.0" onDragDetected="#cavasOnDragDected" onDragDone="#cavasOnDragDone" onDragDropped="#cavasOnDragDropped" onDragEntered="#cavasOnDragEntered" onDragExited="#cavasOnDragExited" onDragOver="#cavasOnDragOver" onMouseClicked="#canvasOnMouseClicked" onMouseDragEntered="#cavasOnMouseDragEntered" onMouseDragExited="#cavasOnMouseDragExited" onMouseDragOver="#cavasOnMouseDragOver" onMouseDragReleased="#cavasOnMouseDragReleased" width="600.0" BorderPane.alignment="CENTER" />
+      <Canvas fx:id="canvas" height="558.0" onDragDetected="#cavasOnDragDected" onDragDone="#cavasOnDragDone" onDragDropped="#cavasOnDragDropped" onDragEntered="#cavasOnDragEntered" onDragExited="#cavasOnDragExited" onDragOver="#cavasOnDragOver" onMouseClicked="#canvasOnMouseClicked" onMouseDragEntered="#cavasOnMouseDragEntered" onMouseDragExited="#cavasOnMouseDragExited" onMouseDragOver="#cavasOnMouseDragOver" onMouseDragReleased="#cavasOnMouseDragReleased" width="744.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

@@ -55,6 +55,9 @@ public class DDController {
     public void setRoot(BorderPane root) {
         this.root = root;
     }
+    public void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
+    }
     @FXML
     void OnAddResource(ActionEvent event) {
         stutus=ADD_RESOURCE;
@@ -113,11 +116,13 @@ public class DDController {
     }
     @FXML
     void canvasOnMouseClicked(MouseEvent event) throws IOException {
-        Bounds ofParent = root.getBoundsInParent();
+        Bounds ofParent=root.getBoundsInParent();
+        //获取canvas在root中的坐标
+       // Bounds ofParent = canvas.localToScene(canvas.getBoundsInLocal());
         //获取鼠标点击点的坐标
         mouseX=event.getX();
         mouseY=event.getY();
-        //调整mouseX和mouseY在子组件中的坐标 not work
+        //调整mouseX和mouseY在子组件中的坐标 not work 因为获取的是canvas的坐标,而不是root的坐标减去的是root的坐标
         mouseX=mouseX-ofParent.getMinX();
         mouseY=mouseY-ofParent.getMinY();
         if(stutus.equals(ADD_RESOURCE)){
@@ -144,8 +149,6 @@ public class DDController {
             System.out.println(event.getData());
 
             //在鼠标点击点画一个圆
-            //在圆上写上资源名
-            //在圆下写上资源数
             Circle circle=new Circle();
             circle.setCenterX(mouseX);
             circle.setCenterY(mouseY);
@@ -154,5 +157,6 @@ public class DDController {
         }
 
     }
+
 
 }
