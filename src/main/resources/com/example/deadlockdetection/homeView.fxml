@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="582.0" prefWidth="837.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.DDController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#rootOnMouseClicked" prefHeight="582.0" prefWidth="837.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.HomeController">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
@@ -17,14 +16,12 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem fx:id="addResource" mnemonicParsing="false" onAction="#OnAddResource" text="添加资源节点" />
+              <MenuItem fx:id="addResource" mnemonicParsing="false" onAction="#OnAddResource" text="add resource" />
+                <MenuItem fx:id="addProcess" mnemonicParsing="false" onAction="#OnAddProcess" text="add process" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help" />
         </menus>
       </MenuBar>
    </top>
-   <center>
-      <Canvas fx:id="canvas" height="558.0" onDragDetected="#cavasOnDragDected" onDragDone="#cavasOnDragDone" onDragDropped="#cavasOnDragDropped" onDragEntered="#cavasOnDragEntered" onDragExited="#cavasOnDragExited" onDragOver="#cavasOnDragOver" onMouseClicked="#canvasOnMouseClicked" onMouseDragEntered="#cavasOnMouseDragEntered" onMouseDragExited="#cavasOnMouseDragExited" onMouseDragOver="#cavasOnMouseDragOver" onMouseDragReleased="#cavasOnMouseDragReleased" width="744.0" BorderPane.alignment="CENTER" />
-   </center>
 </BorderPane>
