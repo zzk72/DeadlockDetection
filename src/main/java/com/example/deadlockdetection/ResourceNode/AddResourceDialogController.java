@@ -19,6 +19,7 @@ public class AddResourceDialogController {
     }
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
+        eventBus.register(this);
     }
 
     @FXML

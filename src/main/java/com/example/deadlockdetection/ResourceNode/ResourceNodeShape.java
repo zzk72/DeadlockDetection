@@ -7,11 +7,22 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.List;
+
 public class ResourceNodeShape extends Group {
     private double centerX;
     private double centerY;
+    double transX=0;
+    double transY=0;
     private String resName;
     private int resNum;
+
+    Color commonColor=Color.rgb(150,27,10,0.8);
+    Color mouseEnteredColor=Color.rgb(255,0,0,1);
+    //缩放比例
+    double scale=1.1;
+
+//    List<String> processList;//进程列表，向这些进程提供分配资源
 
     public ResourceNodeShape(double centerX, double centerY, String resName, int resNum) {
         this.centerX = centerX;
@@ -21,21 +32,56 @@ public class ResourceNodeShape extends Group {
 
         createResourceNode();
 
-        // 为图形添加点击事件处理器
-        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        //鼠标拖拽时移动图形
+        this.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                // 在点击时更改图形的颜色
-                changeColor();
+                updateLocation(event.getSceneX(), event.getSceneY());
             }
         });
+
+        this.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                // 鼠标经过时更改图形的颜色
+                changeColor();
+                //鼠标经过时改变图形的大小
+                changeSize(scale);
+            }
+        });
+        // 鼠标离开时恢复图形的颜色
+        this.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                changeColor();
+                //鼠标离开时恢复图形的大小
+                changeSize(1.0);
+            }
+        });
+    }
+
+    private void changeSize(double s) {//按比例缩放
+        this.setScaleX(s);
+        this.setScaleY(s);
+    }
+
+    private void updateLocation(double sceneX, double sceneY) {
+        // 计算图形的新位置
+        transX = sceneX - centerX;
+        transY = sceneY - centerY;
+
+        // 更新图形的位置
+        this.setTranslateX(transX);
+        this.setTranslateY(transY);
+        System.out.println(centerX+" "+centerY);
+        System.out.println(transX+" "+transY);
     }
 
     private void createResourceNode() {
         // 计算容器的边长（正方形）
         double containerSize = 30 + Math.ceil(Math.sqrt(resNum)) * 30; // 使用向上取整确保能容纳所有圆点
         Rectangle container = new Rectangle(centerX - containerSize / 2, centerY - containerSize / 2, containerSize, containerSize);
-        container.setFill(Color.rgb(31,180,60,0.5));
+        container.setFill(Color.rgb(31,180,60,0.6));
         container.setStroke(Color.rgb(8,90,20,0.5));
 
         // 计算圆点排列的行数和列数
@@ -57,7 +103,7 @@ public class ResourceNodeShape extends Group {
         double circleY = centerY - containerSize / 2 + circleSpacingY / 2;
         for (int i = 0; i < resNum; i++) {
             Circle circle = new Circle(circleX, circleY, circleRadius);
-            circle.setFill(Color.BLUE);
+            circle.setFill(commonColor);
             this.getChildren().add(circle);
 
             circleX += circleSpacingX;
@@ -72,10 +118,10 @@ public class ResourceNodeShape extends Group {
         // 遍历图形内的所有圆点，并更改它们的颜色
         for (int i = 2; i < this.getChildren().size(); i++) {
             Circle circle = (Circle) this.getChildren().get(i);
-            if (circle.getFill() == Color.BLUE) {
-                circle.setFill(Color.RED);
-            } else {
-                circle.setFill(Color.BLUE);
+            if (circle.getFill() == commonColor) {
+                circle.setFill(mouseEnteredColor);
+            }else{
+                circle.setFill(commonColor);
             }
         }
     }

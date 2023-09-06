@@ -2,6 +2,8 @@ package com.example.deadlockdetection;
 
 import com.example.deadlockdetection.Config.BusMsg;
 import com.example.deadlockdetection.Config.MyEvent;
+import com.example.deadlockdetection.ProcessNode.AddProcessDialogController;
+import com.example.deadlockdetection.ProcessNode.ProcessNodeShape;
 import com.example.deadlockdetection.ResourceNode.AddResourceDialogController;
 import com.example.deadlockdetection.ResourceNode.ResourceNodeShape;
 import javafx.event.ActionEvent;
@@ -20,12 +22,18 @@ import com.google.common.eventbus.EventBus;
 import net.sf.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeController {
 
+    private  Map<String,List<ResourceNodeShape> > res_to_Process_map=new HashMap<>();
+    private Map<String,List<ProcessNodeShape>> process_to_res_map=new HashMap<>();
 
-    private List<ResourceNodeShape> resourceNodeList;
+//    private List<ResourceNodeShape> resourceNodeList=null;
+//    private Map<String,ResourceNodeShape> resourceNodeMap=null;
     private BorderPane root;
     public EventBus eventBus;//事件总线
 
@@ -39,8 +47,11 @@ public class HomeController {
     private MenuBar menuBar;
 
     public HomeController(){//set Event and register
+//        resourceNodeMap=new HashMap<>();
+//        resourceNodeList=new ArrayList<>();
         eventBus=new EventBus();
         eventBus.register(this);
+
     }
 
     public void setRoot(BorderPane root) {
@@ -66,20 +77,11 @@ public class HomeController {
         mouseX=mouseX-ofParent.getMinX();
         mouseY=mouseY-ofParent.getMinY();
 
-        switch (state){
-            case ADD_RESOURCE_STATE:
-                addResource();
-                break;
-            case ADD_PROCESS_STATE:
-                addProcess();
+        if(state.equals(ADD_RESOURCE_STATE)){
+            addResource();
+        } else if (state.equals(ADD_PROCESS_STATE)) {
+            addProcess();
         }
-
-//        if(state.equals(ADD_RESOURCE_STATE)){
-//            addResource();
-//        } else if (state.equals(ADD_PROCESS_STATE)) {
-//            addProcess();
-//
-//        }
         state = OFF_STATE;
     }
     private void addResource() throws IOException {
@@ -97,39 +99,58 @@ public class HomeController {
         dialog.setScene(scene);
         dialog.show();
     }
+    @FXML
     private void addProcess() throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addProcessDialog.fxml"));
         AnchorPane root = fxmlLoader.load();
 
         //set subStage controller
-        AddResourceDialogController addResourceDialogController=fxmlLoader.getController();
-        addResourceDialogController.setEventBus(eventBus);
+        AddProcessDialogController addProcessDialogController=fxmlLoader.getController();
+        addProcessDialogController.setEventBus(eventBus);
 
         //set scene
         Scene scene = new Scene(root);
         Stage dialog = new Stage();
-        addResourceDialogController.setStage(dialog);
+        addProcessDialogController.setStage(dialog);
         dialog.setScene(scene);
         dialog.show();
     }
     @Subscribe
-    public void bindAndPaintResourceNode(MyEvent event){//监听消息，并绘制一个资源节点
+    public void handleMsg(MyEvent event){//监听消息并分发
+        JSONObject data=event.getData();
         if(event.getType().equals(BusMsg.ADD_RESOURCE)){
-            JSONObject data=event.getData();
-            //绘制资源节点
-            String resName=data.getString("resName");
-            int resNum=data.getInt("resNum");
-            ResourceNodeShape resourceNodeShape = new ResourceNodeShape(mouseX, mouseY, resName, resNum); // 创建一个资源节点
-            resourceNodeList.add(resourceNodeShape);
-            root.getChildren().add(resourceNodeShape);
+            paintResourceNode(data);
+        }else if(event.getType().equals(BusMsg.ADD_PROCESS)){
+            paintProcessNode(data);
         }
+//        else if(event.getType().equals(BusMsg.ADD_EDGE)){
+//            bindAndPaintEdge(event);
+//        }else if(event.getType().equals(BusMsg.DELETE)){
+//            bindAndDelete(event);
+//        }else if(event.getType().equals(BusMsg.MOVE)){
+//            bindAndMove(event);
+//        }
+
     }
-    @Subscribe
-    public void bindAndPaintProcessNode(MyEvent event){
-        if(event.getType().equals(BusMsg.ADD_PROCESS)){
-            System.out.println(BusMsg.ADD_PROCESS);
-            System.out.println(event.getData());
-        }
+    public void paintResourceNode(JSONObject data){//监听消息，并绘制一个资源节点
+        //绘制资源节点
+        String resName=data.getString("resName");
+        int resNum=data.getInt("resNum");
+        ResourceNodeShape resourceNodeShape = new ResourceNodeShape(mouseX, mouseY, resName, resNum); // 创建一个资源节点
+
+        //更新资源图
+        res_to_Process_map.put(resName,new ArrayList<>());
+        root.getChildren().add(resourceNodeShape);
+    }
+    public void paintProcessNode(JSONObject data){
+        //绘制进程节点
+        String processName=data.getString("processName");
+        ProcessNodeShape processNodeShape = new ProcessNodeShape(mouseX, mouseY, processName); // 创建一个进程节点
+
+        //更新进程图
+        process_to_res_map.put(processName,new ArrayList<>());
+        root.getChildren().add(processNodeShape);
+
     }
 
 
