@@ -1,15 +1,25 @@
-package com.example.deadlockdetection;
+package com.example.deadlockdetection.ResourceNode;
 
+import com.example.deadlockdetection.Config.BusMsg;
+import com.example.deadlockdetection.Config.MyEvent;
 import com.google.common.eventbus.EventBus;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import net.sf.json.JSONObject;
 
 public class AddResourceDialogController {
     EventBus eventBus;
+    Stage stage;
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+    public void setEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     @FXML
     private Button addResourceBtnN;
@@ -23,16 +33,17 @@ public class AddResourceDialogController {
     @FXML
     private TextField resourceNumerTextFiled;
 
+
     @FXML
     void addResourceBtnNOnAction(ActionEvent event) {
-
+        stage.close();
     }
 
     @FXML
     void addResourceBtnYOnAction(ActionEvent event) {
-        String resourceName=resourceNameTextFiled.getText();
-        String resourceNumber=resourceNumerTextFiled.getText();
-        if(resourceName.equals("")||resourceNumber.equals("")){
+        String resName=resourceNameTextFiled.getText();
+        String resNum=resourceNumerTextFiled.getText();
+        if(resName.equals("")||resNum.equals("")){
             Alert alert=new Alert(Alert.AlertType.ERROR);
             alert.setTitle("错误");
             alert.setHeaderText("输入错误");
@@ -40,13 +51,13 @@ public class AddResourceDialogController {
             alert.showAndWait();
         }else{
             JSONObject jsonObject=new JSONObject();
-            jsonObject.put("resourceName",resourceName);
-            jsonObject.put("resourceNumber",resourceNumber);
-            eventBus.post(new MyEvent("addResourceBtnYOnAction",jsonObject));
+            jsonObject.put("resName",resName);
+            jsonObject.put("resNum",resNum);
+            eventBus.post(new MyEvent(BusMsg.ADD_RESOURCE,jsonObject));
+            stage.close();
         }
     }
 
-    public void setEventBus(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
+
+
 }

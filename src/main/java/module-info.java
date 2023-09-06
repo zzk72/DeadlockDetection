@@ -15,4 +15,10 @@ module com.example.deadlockdetection {
 
     opens com.example.deadlockdetection to javafx.fxml;
     exports com.example.deadlockdetection;
+    exports com.example.deadlockdetection.ResourceNode;
+    opens com.example.deadlockdetection.ResourceNode to javafx.fxml;
+    exports com.example.deadlockdetection.Config;
+    opens com.example.deadlockdetection.Config to javafx.fxml;
+    exports com.example.deadlockdetection.ProcessNode;
+    opens com.example.deadlockdetection.ProcessNode to javafx.fxml;
 }

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="342.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.AddResourceDialogController">
+<AnchorPane prefHeight="342.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.ResourceNode.AddResourceDialogController">
    <children>
       <Button fx:id="addResourceBtnY" layoutX="292.0" layoutY="241.0" mnemonicParsing="false" onAction="#addResourceBtnYOnAction" prefHeight="49.0" prefWidth="90.0" text="确定" />
       <TextField fx:id="resourceNameTextFiled" layoutX="82.0" layoutY="51.0" prefHeight="49.0" prefWidth="300.0" promptText="请输入资源名称" />

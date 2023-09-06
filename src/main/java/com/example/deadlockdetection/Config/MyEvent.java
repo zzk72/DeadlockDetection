@@ -1,4 +1,4 @@
-package com.example.deadlockdetection;
+package com.example.deadlockdetection.Config;
 import net.sf.json.JSONObject;
 public class MyEvent {
     private String type;
@@ -17,7 +17,7 @@ public class MyEvent {
         return type;
     }
 
-    public Object getData() {
+    public JSONObject getData() {
         return data;
     }
 }
