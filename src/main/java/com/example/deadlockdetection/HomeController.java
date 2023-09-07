@@ -2,6 +2,7 @@ package com.example.deadlockdetection;
 
 import com.example.deadlockdetection.Config.BusMsg;
 import com.example.deadlockdetection.Config.MyEvent;
+import com.example.deadlockdetection.Config.Point;
 import com.example.deadlockdetection.ProcessNode.AddProcessDialogController;
 import com.example.deadlockdetection.ProcessNode.ProcessNodeShape;
 import com.example.deadlockdetection.ResourceNode.AddResourceDialogController;
@@ -175,20 +176,35 @@ public class HomeController {
             state=OFF_STATE;
             ResourceNodeShape resourceNodeShape=null;
             ProcessNodeShape processNodeShape=null;
+            Point startP=null;
+            Point endP=null;
+
             String startNodeType=node2node.get(0).getString("nodeType");
             String endNodeType=data.getString("nodeType");
+
+            //获取startNode和endNode的相关信息
             if(startNodeType.equals("resource")&&endNodeType.equals("process")) {
                 resourceNodeShape = res_map.get(node2node.get(0).getString("resName"));
                 processNodeShape = process_map.get(data.getString("processName"));
                 res_to_Process_map.get(node2node.get(0).getString("resName")).add(processNodeShape);
+                startP=new Point(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY());
+                endP=new Point(processNodeShape.getTrueX(),processNodeShape.getTrueY());
             } else if (startNodeType.equals("process")&&endNodeType.equals("resource")) {
                 resourceNodeShape = res_map.get(data.getString("resName"));
                 processNodeShape = process_map.get(node2node.get(0).getString("processName"));
                 process_to_res_map.get(node2node.get(0).getString("processName")).add(resourceNodeShape);
+                startP=new Point(processNodeShape.getTrueX(),processNodeShape.getTrueY());
+                endP=new Point(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY());
             } else {
                 System.out.println("错误的边");
+                return;
             }
-            paintArrow(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY(),processNodeShape.getTrueX(),processNodeShape.getTrueY());
+            //获取边缘上的点
+            Point startMarginPoint=resourceNodeShape.getNearestPoint(endP);
+            Point endMarginPoint=processNodeShape.getNearestPoint(startP);
+
+
+            paintArrow(startMarginPoint,endMarginPoint);
             node2node.clear();
         }else {
             System.out.println("错误的状态 "+state);
@@ -197,7 +213,11 @@ public class HomeController {
     }
 
 
-    public  void paintArrow( double startX, double startY, double endX, double endY) {
+    public  void paintArrow( Point startP,Point endP) {
+        double startX=startP.getX();
+        double startY=startP.getY();
+        double endX=endP.getX();
+        double endY=endP.getY();
         // 创建箭头的线段
         Line arrowLine = new Line(startX, startY, endX, endY);
         arrowLine.setStroke(Color.BLACK);

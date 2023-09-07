@@ -62,7 +62,7 @@ public class ProcessNodeShape extends Group{
                 data.put("nodeType","process");
                 data.put("processName",processName);
                 eventBus.post(new MyEvent(BusMsg.ADD_EDGE,data));
-                System.out.println("resourceNodeShape clicked and post a message");
+                System.out.println("processNodeShape clicked and post a message");
             }
         });
         //鼠标停止拖拽时，更新图形的中心点坐标
