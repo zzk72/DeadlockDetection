@@ -178,7 +178,9 @@ public class HomeController {
             ProcessNodeShape processNodeShape=null;
             Point startP=null;
             Point endP=null;
-
+            //获取边缘上的点
+            Point startMarginPoint=null;
+            Point endMarginPoint=null;
             String startNodeType=node2node.get(0).getString("nodeType");
             String endNodeType=data.getString("nodeType");
 
@@ -187,22 +189,27 @@ public class HomeController {
                 resourceNodeShape = res_map.get(node2node.get(0).getString("resName"));
                 processNodeShape = process_map.get(data.getString("processName"));
                 res_to_Process_map.get(node2node.get(0).getString("resName")).add(processNodeShape);
+
+                //get shape center point
                 startP=new Point(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY());
                 endP=new Point(processNodeShape.getTrueX(),processNodeShape.getTrueY());
+
+                //获取边缘上的点
+                startMarginPoint=resourceNodeShape.getNearestPoint(endP);
+                endMarginPoint=processNodeShape.getNearestPoint(startP);
             } else if (startNodeType.equals("process")&&endNodeType.equals("resource")) {
                 resourceNodeShape = res_map.get(data.getString("resName"));
                 processNodeShape = process_map.get(node2node.get(0).getString("processName"));
                 process_to_res_map.get(node2node.get(0).getString("processName")).add(resourceNodeShape);
                 startP=new Point(processNodeShape.getTrueX(),processNodeShape.getTrueY());
                 endP=new Point(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY());
+                //获取边缘上的点
+                startMarginPoint=processNodeShape.getNearestPoint(endP);
+                endMarginPoint=resourceNodeShape.getNearestPoint(startP);
             } else {
                 System.out.println("错误的边");
                 return;
             }
-            //获取边缘上的点
-            Point startMarginPoint=resourceNodeShape.getNearestPoint(endP);
-            Point endMarginPoint=processNodeShape.getNearestPoint(startP);
-
 
             paintArrow(startMarginPoint,endMarginPoint);
             node2node.clear();
