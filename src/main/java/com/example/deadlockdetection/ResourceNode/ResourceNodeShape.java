@@ -1,11 +1,18 @@
 package com.example.deadlockdetection.ResourceNode;
+import com.example.deadlockdetection.Config.BusMsg;
+import com.example.deadlockdetection.Config.MyEvent;
+import com.example.deadlockdetection.Config.Point;
+import com.google.common.eventbus.EventBus;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import net.sf.json.JSONObject;
 
 import java.util.List;
 
@@ -16,6 +23,10 @@ public class ResourceNodeShape extends Group {
     double transY=0;
     private String resName;
     private int resNum;
+    private EventBus eventBus;//事件总线
+
+    private double unitSize=30;//每个资源点的大小
+    private double containerSize;//容器的大小
 
     Color commonColor=Color.rgb(150,27,10,0.8);
     Color mouseEnteredColor=Color.rgb(255,0,0,1);
@@ -24,12 +35,13 @@ public class ResourceNodeShape extends Group {
 
 //    List<String> processList;//进程列表，向这些进程提供分配资源
 
-    public ResourceNodeShape(double centerX, double centerY, String resName, int resNum) {
+    public ResourceNodeShape(double centerX, double centerY, String resName, int resNum,EventBus eventBus) {
         this.centerX = centerX;
         this.centerY = centerY;
         this.resName = resName;
         this.resNum = resNum;
-
+        this.eventBus=eventBus;
+        eventBus.register(this);
         createResourceNode();
 
         //鼠标拖拽时移动图形
@@ -58,8 +70,55 @@ public class ResourceNodeShape extends Group {
                 changeSize(1.0);
             }
         });
+        //鼠标点击时，向事件总线发送事件
+        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                JSONObject data=new JSONObject();
+                data.put("nodeType","resource");
+                data.put("resName",resName);
+                data.put("resNum",resNum);
+                eventBus.post(new MyEvent(BusMsg.ADD_EDGE,data));
+                System.out.println("resourceNodeShape clicked and post a message");
+            }
+        });
+    }
+    public double getTrueX(){
+        return centerX+transX;
+    }
+    public double getTrueY(){
+        return centerY+transY;
     }
 
+    //传入一个点，返回距离该点最近的this Group的边界上的点
+    public Point getNearestPoint(Point point){
+        if(point.getX()<getTrueX()-containerSize/2){
+            if(point.getY()<getTrueY()-containerSize/2){
+                return new Point(getTrueX()-containerSize/2,getTrueY()-containerSize/2);
+            }else if(point.getY()>getTrueY()+containerSize/2){
+                return new Point(getTrueX()-containerSize/2,getTrueY()+containerSize/2);
+            }else{
+                return new Point(getTrueX()-containerSize/2,point.getY());
+            }
+        }
+        else if(point.getX()>getTrueX()+containerSize/2) {
+            if (point.getY() < getTrueY() - containerSize / 2) {
+                return new Point(getTrueX() + containerSize / 2, getTrueY() - containerSize / 2);
+            } else if (point.getY() > getTrueY() + containerSize / 2) {
+                return new Point(getTrueX() + containerSize / 2, getTrueY() + containerSize / 2);
+            } else {
+                return new Point(getTrueX() + containerSize / 2, point.getY());
+            }
+        }else{
+            if(point.getY()<getTrueY()-containerSize/2){
+                return new Point(point.getX(),getTrueY()-containerSize/2);
+            }else if(point.getY()>getTrueY()+containerSize/2){
+                return new Point(point.getX(),getTrueY()+containerSize/2);
+            }else{
+                return point;
+            }
+        }
+    }
     private void changeSize(double s) {//按比例缩放
         this.setScaleX(s);
         this.setScaleY(s);
@@ -79,7 +138,7 @@ public class ResourceNodeShape extends Group {
 
     private void createResourceNode() {
         // 计算容器的边长（正方形）
-        double containerSize = 30 + Math.ceil(Math.sqrt(resNum)) * 30; // 使用向上取整确保能容纳所有圆点
+        containerSize = unitSize + Math.ceil(Math.sqrt(resNum)) * unitSize; // 使用向上取整确保能容纳所有圆点
         Rectangle container = new Rectangle(centerX - containerSize / 2, centerY - containerSize / 2, containerSize, containerSize);
         container.setFill(Color.rgb(31,180,60,0.6));
         container.setStroke(Color.rgb(8,90,20,0.5));
@@ -125,4 +184,6 @@ public class ResourceNodeShape extends Group {
             }
         }
     }
+
+
 }

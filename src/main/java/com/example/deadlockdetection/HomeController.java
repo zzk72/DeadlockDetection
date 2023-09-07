@@ -16,6 +16,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.EventBus;
@@ -29,11 +32,11 @@ import java.util.Map;
 
 public class HomeController {
 
+    public MenuItem addEdge;
     private  Map<String,List<ResourceNodeShape> > res_to_Process_map=new HashMap<>();
     private Map<String,List<ProcessNodeShape>> process_to_res_map=new HashMap<>();
-
-//    private List<ResourceNodeShape> resourceNodeList=null;
-//    private Map<String,ResourceNodeShape> resourceNodeMap=null;
+    private  Map<String,ResourceNodeShape> res_map=new HashMap<>();
+    private  Map<String,ProcessNodeShape> process_map=new HashMap<>();
     private BorderPane root;
     public EventBus eventBus;//事件总线
 
@@ -47,11 +50,10 @@ public class HomeController {
     private MenuBar menuBar;
 
     public HomeController(){//set Event and register
-//        resourceNodeMap=new HashMap<>();
-//        resourceNodeList=new ArrayList<>();
         eventBus=new EventBus();
         eventBus.register(this);
-
+        res_map=new HashMap<>();
+        process_map=new HashMap<>();
     }
 
     public void setRoot(BorderPane root) {
@@ -61,10 +63,14 @@ public class HomeController {
     void OnAddResource(ActionEvent event) {
         state = ADD_RESOURCE_STATE;
     }
-    public void OnAddProcess(ActionEvent actionEvent) {
+    @FXML
+    void OnAddProcess(ActionEvent actionEvent) {
         state = ADD_PROCESS_STATE;
     }
-
+    @FXML
+    public void OnAddEdge(ActionEvent actionEvent) {
+        state = ADD_EDGE_STATE;
+    }
     @FXML
     void rootOnMouseClicked(MouseEvent event) throws IOException {
         Bounds ofParent=root.getBoundsInParent();
@@ -73,7 +79,7 @@ public class HomeController {
         //获取鼠标点击点的坐标
         mouseX=event.getX();
         mouseY=event.getY();
-        //调整mouseX和mouseY在子组件中的坐标 not work 因为获取的是canvas的坐标,而不是root的坐标减去的是root的坐标
+        //调整mouseX和mouseY在子组件中的坐标 (not work 因为获取的是canvas的坐标,而不是root的坐标减去的是root的坐标)
         mouseX=mouseX-ofParent.getMinX();
         mouseY=mouseY-ofParent.getMinY();
 
@@ -99,7 +105,6 @@ public class HomeController {
         dialog.setScene(scene);
         dialog.show();
     }
-    @FXML
     private void addProcess() throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addProcessDialog.fxml"));
         AnchorPane root = fxmlLoader.load();
@@ -123,34 +128,43 @@ public class HomeController {
         }else if(event.getType().equals(BusMsg.ADD_PROCESS)){
             paintProcessNode(data);
         }
-//        else if(event.getType().equals(BusMsg.ADD_EDGE)){
-//            bindAndPaintEdge(event);
-//        }else if(event.getType().equals(BusMsg.DELETE)){
-//            bindAndDelete(event);
-//        }else if(event.getType().equals(BusMsg.MOVE)){
-//            bindAndMove(event);
-//        }
+        else if(event.getType().equals(BusMsg.ADD_EDGE)){
+           System.out.println(data);
+        }
+        else{
+            System.out.println("未知消息");
+        }
 
     }
     public void paintResourceNode(JSONObject data){//监听消息，并绘制一个资源节点
         //绘制资源节点
         String resName=data.getString("resName");
         int resNum=data.getInt("resNum");
-        ResourceNodeShape resourceNodeShape = new ResourceNodeShape(mouseX, mouseY, resName, resNum); // 创建一个资源节点
+        ResourceNodeShape resourceNodeShape = new ResourceNodeShape(mouseX, mouseY, resName, resNum,eventBus); // 创建一个资源节点
 
         //更新资源图
         res_to_Process_map.put(resName,new ArrayList<>());
+        res_map.put(resName,resourceNodeShape);
         root.getChildren().add(resourceNodeShape);
     }
     public void paintProcessNode(JSONObject data){
         //绘制进程节点
         String processName=data.getString("processName");
-        ProcessNodeShape processNodeShape = new ProcessNodeShape(mouseX, mouseY, processName); // 创建一个进程节点
+        ProcessNodeShape processNodeShape = new ProcessNodeShape(mouseX, mouseY, processName,eventBus); // 创建一个进程节点
 
         //更新进程图
         process_to_res_map.put(processName,new ArrayList<>());
+        process_map.put(processName,processNodeShape);
         root.getChildren().add(processNodeShape);
 
+    }
+    public void paintEdgeNode(JSONObject data){
+        //绘制边
+        String resName=data.getString("resName");
+        String processName=data.getString("processName");
+        ResourceNodeShape resourceNodeShape=res_to_Process_map.get(resName).get(0);
+        ProcessNodeShape processNodeShape=process_to_res_map.get(processName).get(0);
+        paintArrow(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY(),processNodeShape.getTrueX(),processNodeShape.getTrueY());
     }
 
 
@@ -161,5 +175,27 @@ public class HomeController {
     private final String DELETE_STATE="deleteState";
     private final String MOVE_STATE="moveState";
     private String state = OFF_STATE;//记录当前状态
+
+    public  void paintArrow( double startX, double startY, double endX, double endY) {
+        // 创建箭头的线段
+        Line arrowLine = new Line(startX, startY, endX, endY);
+        arrowLine.setStroke(Color.BLACK);
+
+        // 计算箭头的角度
+        double angle = Math.atan2(endY - startY, endX - startX);
+
+        // 创建箭头的箭头部分
+        double arrowLength = 15; // 箭头的长度
+        Polygon arrowHead = new Polygon();
+        arrowHead.getPoints().addAll(
+                endX - arrowLength * Math.cos(angle - Math.PI / 6), endY - arrowLength * Math.sin(angle - Math.PI / 6),
+                endX, endY,
+                endX - arrowLength * Math.cos(angle + Math.PI / 6), endY - arrowLength * Math.sin(angle + Math.PI / 6)
+        );
+        arrowHead.setFill(Color.BLACK);
+
+        // 添加箭头的线段和箭头部分到指定的Group
+        root.getChildren().addAll(arrowLine, arrowHead);
+    }
 
 }

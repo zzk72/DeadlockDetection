@@ -2,6 +2,7 @@ package com.example.deadlockdetection;
 
 import atlantafx.base.theme.PrimerLight;
 
+import com.example.deadlockdetection.edge.Arrow;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -54,7 +55,8 @@ public class Main extends Application {
 //
 //
 
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+        //Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+
         setObject();
         primaryStage.setTitle("DDA");
         primaryStage.setScene(scene);

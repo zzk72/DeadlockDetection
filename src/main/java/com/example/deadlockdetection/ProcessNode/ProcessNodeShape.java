@@ -1,22 +1,46 @@
 package com.example.deadlockdetection.ProcessNode;
+import com.example.deadlockdetection.Config.BusMsg;
+import com.example.deadlockdetection.Config.MyEvent;
+import com.example.deadlockdetection.Config.Point;
+import com.google.common.eventbus.EventBus;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import net.sf.json.JSONObject;
 
 public class ProcessNodeShape extends Group{
     double centerX;
     double centerY;
     double transX=0;
     double transY=0;
-    private double scale=1.1;
-    String processName;
-    Color commonColor=Color.rgb(140, 80, 210, 0.5);
-    Color mouseEnteredColor=Color.rgb(90, 20, 255, 0.8);
-//    List<String> resourceList;//资源列表，向这些资源申请资源
-    public ProcessNodeShape(double centerX, double centerY, String processName) {
+    private double scale=1.1;//缩放比例
+    private double circleRadius=20;//圆的半径
+    private String processName;
+    private EventBus eventBus;//事件总线
+    private Color commonColor=Color.rgb(140, 80, 210, 0.5);
+    private Color mouseEnteredColor=Color.rgb(90, 20, 255, 0.8);
+
+    public double getTrueX(){
+        return centerX+transX;
+    }
+    public  double getTrueY(){
+        return centerY+transY;
+    }
+    //传入一个点，返回距离该点最近的this Group的边界上的点
+    public Point getNearestPoint(Point point){
+        double x=point.getX();
+        double y=point.getY();
+        double x1=this.getTrueX();
+        double y1=this.getTrueY();
+        double r=circleRadius;
+        double x2=x1+r*Math.cos(Math.atan2(y-y1,x-x1));
+        double y2=y1+r*Math.sin(Math.atan2(y-y1,x-x1));
+        return new Point(x2,y2);
+    }
+    public ProcessNodeShape(double centerX, double centerY, String processName, EventBus eventBus) {
         this.centerX = centerX;
         this.centerY = centerY;
         this.processName = processName;
@@ -28,6 +52,16 @@ public class ProcessNodeShape extends Group{
             @Override
             public void handle(MouseEvent event) {
                 transLocation(event.getSceneX(), event.getSceneY());//传入鼠标在scene中的坐标
+            }
+        });
+        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                JSONObject data=new JSONObject();
+                data.put("nodeType","process");
+                data.put("processName",processName);
+                eventBus.post(new MyEvent(BusMsg.ADD_EDGE,data));
+                System.out.println("resourceNodeShape clicked and post a message");
             }
         });
         //鼠标停止拖拽时，更新图形的中心点坐标
@@ -96,5 +130,6 @@ public class ProcessNodeShape extends Group{
             processBody.setFill(commonColor);
         }
     }
+
 
 }
