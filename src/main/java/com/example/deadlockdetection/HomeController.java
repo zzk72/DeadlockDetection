@@ -22,6 +22,7 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.EventBus;
+import lombok.Data;
 import net.sf.json.JSONObject;
 
 import java.io.IOException;
@@ -30,35 +31,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Data
 public class HomeController {
 
-    public MenuItem addEdge;
-    private  Map<String,List<ResourceNodeShape> > res_to_Process_map=new HashMap<>();
-    private Map<String,List<ProcessNodeShape>> process_to_res_map=new HashMap<>();
-    private  Map<String,ResourceNodeShape> res_map=new HashMap<>();
-    private  Map<String,ProcessNodeShape> process_map=new HashMap<>();
+
     private BorderPane root;
     public EventBus eventBus;//事件总线
 
-    double mouseX;
-    double mouseY;
+    private double mouseX;
+    private double mouseY;
+    private ArrayList<JSONObject> node2node=new ArrayList<>();
+    private  Map<String,List<ProcessNodeShape> > res_to_Process_map=new HashMap<>();
+    private Map<String,List<ResourceNodeShape>> process_to_res_map=new HashMap<>();
+    private  Map<String,ResourceNodeShape> res_map=new HashMap<>();
+    private  Map<String,ProcessNodeShape> process_map=new HashMap<>();
 
     @FXML
     private MenuItem addResource;
-
     @FXML
     private MenuBar menuBar;
+    @FXML
+    public MenuItem addEdge;
 
-    public HomeController(){//set Event and register
-        eventBus=new EventBus();
-        eventBus.register(this);
-        res_map=new HashMap<>();
-        process_map=new HashMap<>();
-    }
 
-    public void setRoot(BorderPane root) {
-        this.root = root;
-    }
+
     @FXML
     void OnAddResource(ActionEvent event) {
         state = ADD_RESOURCE_STATE;
@@ -69,7 +65,8 @@ public class HomeController {
     }
     @FXML
     public void OnAddEdge(ActionEvent actionEvent) {
-        state = ADD_EDGE_STATE;
+        state = ADD_EDGE_STATE1;
+        node2node.clear();
     }
     @FXML
     void rootOnMouseClicked(MouseEvent event) throws IOException {
@@ -85,10 +82,17 @@ public class HomeController {
 
         if(state.equals(ADD_RESOURCE_STATE)){
             addResource();
+            state = OFF_STATE;
         } else if (state.equals(ADD_PROCESS_STATE)) {
             addProcess();
+            state = OFF_STATE;
         }
-        state = OFF_STATE;
+    }
+    public HomeController(){//set Event and register
+        eventBus=new EventBus();
+        eventBus.register(this);
+        res_map=new HashMap<>();
+        process_map=new HashMap<>();
     }
     private void addResource() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addResourceDialog.fxml"));
@@ -129,6 +133,7 @@ public class HomeController {
             paintProcessNode(data);
         }
         else if(event.getType().equals(BusMsg.ADD_EDGE)){
+            paintEdgeNode(data);
            System.out.println(data);
         }
         else{
@@ -159,22 +164,38 @@ public class HomeController {
 
     }
     public void paintEdgeNode(JSONObject data){
+        System.out.println("paintEdgeNode");
         //绘制边
-        String resName=data.getString("resName");
-        String processName=data.getString("processName");
-        ResourceNodeShape resourceNodeShape=res_to_Process_map.get(resName).get(0);
-        ProcessNodeShape processNodeShape=process_to_res_map.get(processName).get(0);
-        paintArrow(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY(),processNodeShape.getTrueX(),processNodeShape.getTrueY());
+        if(state==ADD_EDGE_STATE1){
+            System.out.println("paintEdgeNode1");
+            node2node.add(data);
+            state=ADD_EDGE_STATE2;
+        }else if(state==ADD_EDGE_STATE2){
+            System.out.println("paintEdgeNode2");
+            state=OFF_STATE;
+            ResourceNodeShape resourceNodeShape=null;
+            ProcessNodeShape processNodeShape=null;
+            String startNodeType=node2node.get(0).getString("nodeType");
+            String endNodeType=data.getString("nodeType");
+            if(startNodeType.equals("resource")&&endNodeType.equals("process")) {
+                resourceNodeShape = res_map.get(node2node.get(0).getString("resName"));
+                processNodeShape = process_map.get(data.getString("processName"));
+                res_to_Process_map.get(node2node.get(0).getString("resName")).add(processNodeShape);
+            } else if (startNodeType.equals("process")&&endNodeType.equals("resource")) {
+                resourceNodeShape = res_map.get(data.getString("resName"));
+                processNodeShape = process_map.get(node2node.get(0).getString("processName"));
+                process_to_res_map.get(node2node.get(0).getString("processName")).add(resourceNodeShape);
+            } else {
+                System.out.println("错误的边");
+            }
+            paintArrow(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY(),processNodeShape.getTrueX(),processNodeShape.getTrueY());
+            node2node.clear();
+        }else {
+            System.out.println("错误的状态 "+state);
+        }
+
     }
 
-
-    private final String OFF_STATE ="off";
-    private final String ADD_RESOURCE_STATE ="addResourceState";
-    private final String ADD_PROCESS_STATE ="addProcessState";
-    private final String ADD_EDGE_STATE="addEdgeState";
-    private final String DELETE_STATE="deleteState";
-    private final String MOVE_STATE="moveState";
-    private String state = OFF_STATE;//记录当前状态
 
     public  void paintArrow( double startX, double startY, double endX, double endY) {
         // 创建箭头的线段
@@ -197,5 +218,12 @@ public class HomeController {
         // 添加箭头的线段和箭头部分到指定的Group
         root.getChildren().addAll(arrowLine, arrowHead);
     }
-
+    private final String OFF_STATE ="off";
+    private final String ADD_RESOURCE_STATE ="addResourceState";
+    private final String ADD_PROCESS_STATE ="addProcessState";
+    private final String ADD_EDGE_STATE1="addEdgeState1";
+    private final String ADD_EDGE_STATE2="addEdgeState2";
+    private final String DELETE_STATE="deleteState";
+    private final String MOVE_STATE="moveState";
+    private String state = OFF_STATE;//记录当前状态
 }

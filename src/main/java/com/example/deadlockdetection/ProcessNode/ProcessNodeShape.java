@@ -9,8 +9,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import lombok.Data;
 import net.sf.json.JSONObject;
-
+@Data
 public class ProcessNodeShape extends Group{
     double centerX;
     double centerY;

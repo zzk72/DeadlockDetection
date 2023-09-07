@@ -12,10 +12,11 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import lombok.Data;
 import net.sf.json.JSONObject;
 
 import java.util.List;
-
+@Data
 public class ResourceNodeShape extends Group {
     private double centerX;
     private double centerY;

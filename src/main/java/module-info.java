@@ -12,6 +12,7 @@ module com.example.deadlockdetection {
     requires com.google.common;
     requires json.lib;
     requires atlantafx.base;
+    requires lombok;
 
     opens com.example.deadlockdetection to javafx.fxml;
     exports com.example.deadlockdetection;
