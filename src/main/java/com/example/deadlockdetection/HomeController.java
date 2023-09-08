@@ -7,6 +7,7 @@ import com.example.deadlockdetection.ProcessNode.AddProcessDialogController;
 import com.example.deadlockdetection.ProcessNode.ProcessNodeShape;
 import com.example.deadlockdetection.ResourceNode.AddResourceDialogController;
 import com.example.deadlockdetection.ResourceNode.ResourceNodeShape;
+import com.example.deadlockdetection.edge.EdgeArrowShape;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -210,8 +211,8 @@ public class HomeController {
                 System.out.println("错误的边");
                 return;
             }
-
-            paintArrow(startMarginPoint,endMarginPoint);
+            EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,"apply",node2node.get(0).getString("nodeType"),data.getString("nodeType"),root);
+            //paintArrow(startMarginPoint,endMarginPoint);
             node2node.clear();
         }else {
             System.out.println("错误的状态 "+state);
@@ -219,32 +220,6 @@ public class HomeController {
 
     }
 
-
-    public  void paintArrow( Point startP,Point endP) {
-        double startX=startP.getX();
-        double startY=startP.getY();
-        double endX=endP.getX();
-        double endY=endP.getY();
-        // 创建箭头的线段
-        Line arrowLine = new Line(startX, startY, endX, endY);
-        arrowLine.setStroke(Color.BLACK);
-
-        // 计算箭头的角度
-        double angle = Math.atan2(endY - startY, endX - startX);
-
-        // 创建箭头的箭头部分
-        double arrowLength = 15; // 箭头的长度
-        Polygon arrowHead = new Polygon();
-        arrowHead.getPoints().addAll(
-                endX - arrowLength * Math.cos(angle - Math.PI / 6), endY - arrowLength * Math.sin(angle - Math.PI / 6),
-                endX, endY,
-                endX - arrowLength * Math.cos(angle + Math.PI / 6), endY - arrowLength * Math.sin(angle + Math.PI / 6)
-        );
-        arrowHead.setFill(Color.BLACK);
-
-        // 添加箭头的线段和箭头部分到指定的Group
-        root.getChildren().addAll(arrowLine, arrowHead);
-    }
     private final String OFF_STATE ="off";
     private final String ADD_RESOURCE_STATE ="addResourceState";
     private final String ADD_PROCESS_STATE ="addProcessState";

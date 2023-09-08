@@ -1,10 +1,14 @@
 package com.example.deadlockdetection.edge;
 
+import com.example.deadlockdetection.Config.Point;
 import javafx.scene.Group;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import lombok.Data;
 
+@Data
 public class EdgeArrowShape extends Group {
     private Line arrowLine;
     private Polygon arrowHead;
@@ -12,13 +16,21 @@ public class EdgeArrowShape extends Group {
     private double startY;
     private double endX;
     private double endY;
+    String edgeType;
+    String startNodeName;
+    String endNodeName;
+    BorderPane root;
 
 
-    public EdgeArrowShape(double startX, double startY, double endX, double endY) {
-        this.startX = startX;
-        this.startY = startY;
-        this.endX=endX;
-        this.endY=endY;
+    public EdgeArrowShape(Point startPoint, Point endPoint, String edgeType, String startNodeName, String endNodeName, BorderPane root) {
+        this.startX = startPoint.getX();
+        this.startY = startPoint.getY();
+        this.endX = endPoint.getX();
+        this.endY = endPoint.getY();
+        this.edgeType = edgeType;
+        this.startNodeName = startNodeName;
+        this.endNodeName = endNodeName;
+        this.root = root;
         createArrow();
     }
 
@@ -41,7 +53,7 @@ public class EdgeArrowShape extends Group {
         arrowHead.setFill(Color.BLACK);
 
         // 添加箭头的线段和箭头部分到当前Group
-        getChildren().addAll(arrowLine, arrowHead);
+        root.getChildren().addAll(arrowLine, arrowHead);
     }
 
 
