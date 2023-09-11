@@ -37,6 +37,7 @@ import java.util.Map;
 public class HomeController {
 
 
+    public BorderPane borderPane;
     private BorderPane root;
     public EventBus eventBus;//事件总线
 
@@ -111,6 +112,7 @@ public class HomeController {
         dialog.setScene(scene);
         dialog.show();
     }
+    @FXML
     private void addProcess() throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addProcessDialog.fxml"));
         AnchorPane root = fxmlLoader.load();
@@ -198,6 +200,8 @@ public class HomeController {
                 //获取边缘上的点
                 startMarginPoint=resourceNodeShape.getNearestPoint(endP);
                 endMarginPoint=processNodeShape.getNearestPoint(startP);
+
+                //调整箭头，向上偏移
             } else if (startNodeType.equals("process")&&endNodeType.equals("resource")) {
                 resourceNodeShape = res_map.get(data.getString("resName"));
                 processNodeShape = process_map.get(node2node.get(0).getString("processName"));

@@ -39,6 +39,12 @@ public class ProcessNodeShape extends Group{
         double r=circleRadius;
         double x2=x1+r*Math.cos(Math.atan2(y-y1,x-x1));
         double y2=y1+r*Math.sin(Math.atan2(y-y1,x-x1));
+
+        //让箭头脱离圆的边界，方便绘制平行边
+        if(x2<x1) x2-=r*0.3;
+        else x2+=r*0.3;
+        if(y2<y1) y2-=r*0.3;
+        else y2+=r*0.3;
         return new Point(x2,y2);
     }
     public ProcessNodeShape(double centerX, double centerY, String processName, EventBus eventBus) {

@@ -93,28 +93,30 @@ public class ResourceNodeShape extends Group {
 
     //传入一个点，返回距离该点最近的this Group的边界上的点
     public Point getNearestPoint(Point point){
+        //偏移量
+        double offsetXY=containerSize*0.2;
         if(point.getX()<getTrueX()-containerSize/2){
             if(point.getY()<getTrueY()-containerSize/2){
-                return new Point(getTrueX()-containerSize/2,getTrueY()-containerSize/2);
+                return new Point(getTrueX()-containerSize/2-offsetXY,getTrueY()-containerSize/2-offsetXY);
             }else if(point.getY()>getTrueY()+containerSize/2){
-                return new Point(getTrueX()-containerSize/2,getTrueY()+containerSize/2);
+                return new Point(getTrueX()-containerSize/2-offsetXY,getTrueY()+containerSize/2+offsetXY);
             }else{
-                return new Point(getTrueX()-containerSize/2,point.getY());
+                return new Point(getTrueX()-containerSize/2-offsetXY,point.getY());
             }
         }
         else if(point.getX()>getTrueX()+containerSize/2) {
             if (point.getY() < getTrueY() - containerSize / 2) {
-                return new Point(getTrueX() + containerSize / 2, getTrueY() - containerSize / 2);
+                return new Point(getTrueX() + containerSize / 2+offsetXY, getTrueY() - containerSize / 2-offsetXY);
             } else if (point.getY() > getTrueY() + containerSize / 2) {
-                return new Point(getTrueX() + containerSize / 2, getTrueY() + containerSize / 2);
+                return new Point(getTrueX() + containerSize / 2+offsetXY, getTrueY() + containerSize / 2+offsetXY);
             } else {
-                return new Point(getTrueX() + containerSize / 2, point.getY());
+                return new Point(getTrueX() + containerSize / 2+offsetXY, point.getY());
             }
         }else{
             if(point.getY()<getTrueY()-containerSize/2){
-                return new Point(point.getX(),getTrueY()-containerSize/2);
+                return new Point(point.getX(),getTrueY()-containerSize/2-offsetXY);
             }else if(point.getY()>getTrueY()+containerSize/2){
-                return new Point(point.getX(),getTrueY()+containerSize/2);
+                return new Point(point.getX(),getTrueY()+containerSize/2+offsetXY);
             }else{
                 return point;
             }
