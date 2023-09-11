@@ -1,0 +1,18 @@
+.button{
+    -fx-background-color: #396bd3;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI";
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2;
+    -fx-padding: 5 10 5 10;
+}
+.button:hover{
+    -fx-background-color: #1e5ee7;
+    -fx-text-fill: #e1e0ee;
+    -fx-border-color: #1e5ee7;
+    -fx-font-weight: bold;
+}

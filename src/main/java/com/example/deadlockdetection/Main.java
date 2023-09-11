@@ -9,6 +9,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 public class Main extends Application {
@@ -21,44 +22,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-//        // 创建一个箭头形状
-//        Group root = new Group();
-//        scene = new Scene(root, 400, 400);
-//
-//        // 创建箭头的主体部分（三角形）
-//        Polygon arrowHead = new Polygon(
-//                20, 0,
-//                0, 10,
-//                20, 20
-//        );
-//        arrowHead.setFill(Color.RED);
-//
-//        // 创建箭头的尾部部分（矩形）
-//        Rectangle arrowTail = new Rectangle(20, 5, 150, 10);
-//        arrowTail.setFill(Color.RED);
-//
-//        // 将箭头的主体部分和尾部部分组合成一个箭头形状
-//        Group arrow = new Group(arrowHead, arrowTail);
-//        arrow.setLayoutX(100); // 设置箭头在场景中的位置
-//        arrow.setLayoutY(100);
-//        arrow.setOnMouseClicked((MouseEvent event) -> {
-//            // 在点击时改变颜色
-//            if (arrowHead.getFill() == Color.RED) {
-//                arrowHead.setFill(Color.BLUE);
-//                arrowTail.setFill(Color.BLUE);
-//            } else {
-//                arrowHead.setFill(Color.RED);
-//                arrowTail.setFill(Color.RED);
-//            }
-//        });
-//        root.getChildren().add(arrow);
-//
-//
 
         //Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
         setObject();
         primaryStage.setTitle("DDA");
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }

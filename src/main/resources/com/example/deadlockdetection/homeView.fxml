@@ -5,7 +5,11 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#rootOnMouseClicked" prefHeight="582.0" prefWidth="837.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.HomeController">
+<?import java.net.URL?>
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            onMouseClicked="#rootOnMouseClicked" prefHeight="582.0" prefWidth="837.0"
+            xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.deadlockdetection.HomeController">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
@@ -25,4 +29,8 @@
         </menus>
       </MenuBar>
    </top>
+
+    <stylesheets>
+        <URL value="@HomeView.css" />
+    </stylesheets>
 </BorderPane>

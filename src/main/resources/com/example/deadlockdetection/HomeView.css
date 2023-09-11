@@ -1,0 +1,48 @@
+/* */
+.root {
+    -fx-background-radius: 10;
+}
+/* 设置整个界面的背景 */
+#borderPane {
+    -fx-background-color: #fdfdfd; /* 背景 */
+}
+
+/* 设置菜单栏的样式 */
+#menuBar {
+    -fx-background-color: #e3e3e3; /* 背景 */
+    -fx-border-color: #e3e3e3; /* 边框颜色 */
+    /*-fx-background-radius: 10;*/
+    -fx-min-height: 30px;
+    -fx-font-size: 15px; /* 字体大小 */
+}
+.menu{
+    -fx-min-height: 30px;
+    -fx-background-radius: 5;
+}
+.menu:hover{
+    -fx-background-color: #0a5cef; /* 背景 */
+    -fx-text-fill: #fdfffd; /*文字颜色 */
+}
+
+/* 设置菜单项的样式 */
+.menu-item {
+    -fx-min-height: 20px;
+
+    -fx-text-fill: #606060; /*文字颜色 */
+    -fx-font-size: 15px; /* 字体大小 */
+    -fx-font-family: "Segoe UI"; /* 字体 */
+
+    /*-fx-background-color: #f3f3f3; !* 背景颜色 *!*/
+}
+
+
+/* 鼠标悬停时的样式 */
+.menu-item:hover {
+    -fx-background-color: #0a5cef; /* 背景 */
+    -fx-text-fill: #fdfffd; /*文字颜色 */
+}
+
+/* 菜单项被点击时的样式 */
+.menu-item:pressed {
+    /*-fx-background-color: #4D9253; !* 点击效果的背景颜色 *!*/
+}
