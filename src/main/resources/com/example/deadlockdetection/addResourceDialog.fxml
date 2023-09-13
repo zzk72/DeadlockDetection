@@ -4,6 +4,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<?import java.net.URL?>
 <AnchorPane prefHeight="342.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.ResourceNode.AddResourceDialogController">
    <children>
       <Button fx:id="addResourceBtnY" layoutX="292.0" layoutY="241.0" mnemonicParsing="false" onAction="#addResourceBtnYOnAction" prefHeight="49.0" prefWidth="90.0" text="确定" />
@@ -11,4 +12,7 @@
       <TextField fx:id="resourceNumerTextFiled" layoutX="82.0" layoutY="147.0" prefHeight="49.0" prefWidth="300.0" promptText="请输入资源数量" />
       <Button fx:id="addResourceBtnN" layoutX="82.0" layoutY="241.0" mnemonicParsing="false" onAction="#addResourceBtnNOnAction" prefHeight="49.0" prefWidth="90.0" text="取消" />
    </children>
+   <stylesheets>
+      <URL value="@Dialog.css" />
+    </stylesheets>
 </AnchorPane>

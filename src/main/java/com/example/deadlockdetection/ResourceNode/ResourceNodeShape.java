@@ -14,8 +14,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import lombok.Data;
 import net.sf.json.JSONObject;
-
 import java.util.List;
+
 @Data
 public class ResourceNodeShape extends Group {
     private double centerX;
@@ -94,7 +94,7 @@ public class ResourceNodeShape extends Group {
     //传入一个点，返回距离该点最近的this Group的边界上的点
     public Point getNearestPoint(Point point){
         //偏移量
-        double offsetXY=containerSize*0.2;
+        double offsetXY=0;
         if(point.getX()<getTrueX()-containerSize/2){
             if(point.getY()<getTrueY()-containerSize/2){
                 return new Point(getTrueX()-containerSize/2-offsetXY,getTrueY()-containerSize/2-offsetXY);
@@ -153,7 +153,6 @@ public class ResourceNodeShape extends Group {
         // 计算每个圆点之间的间隔
         double circleSpacingX = containerSize / numCols;
         double circleSpacingY = containerSize / numRows;
-
 
         // 在容器上方显示资源名
         Text resourceNameText = new Text(centerX - containerSize / 2, centerY - containerSize / 2 - 5, resName);

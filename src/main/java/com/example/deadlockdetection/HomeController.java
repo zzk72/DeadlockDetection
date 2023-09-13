@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
@@ -28,16 +29,14 @@ import lombok.Data;
 import net.sf.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 public class HomeController {
 
 
     public BorderPane borderPane;
+    public Menu execute;
     private BorderPane root;
     public EventBus eventBus;//事件总线
 
@@ -57,6 +56,12 @@ public class HomeController {
     public MenuItem addEdge;
 
 
+    public HomeController(){//set Event and register
+        eventBus=new EventBus();
+        eventBus.register(this);
+        res_map=new HashMap<>();
+        process_map=new HashMap<>();
+    }
 
     @FXML
     void OnAddResource(ActionEvent event) {
@@ -89,13 +94,10 @@ public class HomeController {
         } else if (state.equals(ADD_PROCESS_STATE)) {
             addProcess();
             state = OFF_STATE;
+        }else if(state.equals(DELETE_STATE)) {
+            deleteNode();
+            state = OFF_STATE;
         }
-    }
-    public HomeController(){//set Event and register
-        eventBus=new EventBus();
-        eventBus.register(this);
-        res_map=new HashMap<>();
-        process_map=new HashMap<>();
     }
     private void addResource() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addResourceDialog.fxml"));
@@ -127,6 +129,9 @@ public class HomeController {
         addProcessDialogController.setStage(dialog);
         dialog.setScene(scene);
         dialog.show();
+    }
+    private void deleteNode(){
+
     }
     @Subscribe
     public void handleMsg(MyEvent event){//监听消息并分发
@@ -170,11 +175,11 @@ public class HomeController {
     public void paintEdgeNode(JSONObject data){
         System.out.println("paintEdgeNode");
         //绘制边
-        if(state==ADD_EDGE_STATE1){
+        if(state.equals(ADD_EDGE_STATE1)){
             System.out.println("paintEdgeNode1");
             node2node.add(data);
             state=ADD_EDGE_STATE2;
-        }else if(state==ADD_EDGE_STATE2){
+        }else if(Objects.equals(state, ADD_EDGE_STATE2)){
             System.out.println("paintEdgeNode2");
             state=OFF_STATE;
             ResourceNodeShape resourceNodeShape=null;
@@ -188,7 +193,7 @@ public class HomeController {
             String endNodeType=data.getString("nodeType");
 
             //获取startNode和endNode的相关信息
-            if(startNodeType.equals("resource")&&endNodeType.equals("process")) {
+            if(startNodeType.equals("resource")&&endNodeType.equals("process")) {//分配边
                 resourceNodeShape = res_map.get(node2node.get(0).getString("resName"));
                 processNodeShape = process_map.get(data.getString("processName"));
                 res_to_Process_map.get(node2node.get(0).getString("resName")).add(processNodeShape);
@@ -202,7 +207,9 @@ public class HomeController {
                 endMarginPoint=processNodeShape.getNearestPoint(startP);
 
                 //调整箭头，向上偏移
-            } else if (startNodeType.equals("process")&&endNodeType.equals("resource")) {
+                EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,"apply",node2node.get(0).getString("nodeType"),data.getString("nodeType"),root);
+
+            } else if (startNodeType.equals("process")&&endNodeType.equals("resource")) {//申请边
                 resourceNodeShape = res_map.get(data.getString("resName"));
                 processNodeShape = process_map.get(node2node.get(0).getString("processName"));
                 process_to_res_map.get(node2node.get(0).getString("processName")).add(resourceNodeShape);
@@ -211,11 +218,12 @@ public class HomeController {
                 //获取边缘上的点
                 startMarginPoint=processNodeShape.getNearestPoint(endP);
                 endMarginPoint=resourceNodeShape.getNearestPoint(startP);
+                EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,"request",node2node.get(0).getString("nodeType"),data.getString("nodeType"),root);
+
             } else {
                 System.out.println("错误的边");
                 return;
             }
-            EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,"apply",node2node.get(0).getString("nodeType"),data.getString("nodeType"),root);
             //paintArrow(startMarginPoint,endMarginPoint);
             node2node.clear();
         }else {
@@ -232,4 +240,33 @@ public class HomeController {
     private final String DELETE_STATE="deleteState";
     private final String MOVE_STATE="moveState";
     private String state = OFF_STATE;//记录当前状态
+
+    @FXML
+    public void OnDeleteEdge(ActionEvent actionEvent) {
+        state = DELETE_STATE;
+    }
+
+    //执行资源分配图约简算法
+    public void OnExecute(ActionEvent actionEvent){
+        System.out.println("执行约简算法");
+        //获取资源分配图
+        Map<String,List<String>> res_to_process=new HashMap<>();
+        for(String resName:res_to_Process_map.keySet()){
+            List<String> processList=new ArrayList<>();
+            for(ProcessNodeShape processNodeShape:res_to_Process_map.get(resName)){
+                processList.add(processNodeShape.getProcessName());
+            }
+            res_to_process.put(resName,processList);
+        }
+        //获取进程请求图
+        Map<String,List<String>> process_to_res=new HashMap<>();
+        for(String processName:process_to_res_map.keySet()){
+            List<String> resList=new ArrayList<>();
+            for(ResourceNodeShape resourceNodeShape:process_to_res_map.get(processName)){
+                resList.add(resourceNodeShape.getResName());
+            }
+            process_to_res.put(processName,resList);
+        }
+
+    }
 }

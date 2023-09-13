@@ -4,13 +4,13 @@ import com.example.deadlockdetection.Config.Point;
 import javafx.scene.Group;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.QuadCurve;
 import lombok.Data;
 
 @Data
 public class EdgeArrowShape extends Group {
-    private Line arrowLine;
+    private QuadCurve arrowCurve;
     private Polygon arrowHead;
     private double startX;
     private double startY;
@@ -20,7 +20,10 @@ public class EdgeArrowShape extends Group {
     String startNodeName;
     String endNodeName;
     BorderPane root;
-
+    double offset;
+    Color commonColor;
+    Color commonApplyColor =Color.rgb(255,0,0,1);
+    Color commonRequestColor=Color.rgb(0,0,255,0.8);
 
     public EdgeArrowShape(Point startPoint, Point endPoint, String edgeType, String startNodeName, String endNodeName, BorderPane root) {
         this.startX = startPoint.getX();
@@ -31,30 +34,39 @@ public class EdgeArrowShape extends Group {
         this.startNodeName = startNodeName;
         this.endNodeName = endNodeName;
         this.root = root;
+        if(edgeType.equals("request")) {
+            offset = 30;
+            commonColor = commonRequestColor;
+        }
+        else {
+            offset = -30;
+            commonColor = commonApplyColor;
+        }
         createArrow();
     }
 
     private void createArrow() {
-        // 创建箭头的线段
-        arrowLine = new Line(startX, startY, endX, endY);
-        arrowLine.setStroke(Color.BLACK);
-
-        // 计算箭头的角度
-        double angle = Math.atan2(endY - startY, endX - startX);
+        // 创建箭头的曲线
+        arrowCurve = new QuadCurve(startX, startY, (startX + endX) / 2+offset, (startY + endY) / 2+offset, endX, endY);
+        arrowCurve.setStroke(commonColor);
+        arrowCurve.setStrokeWidth(3);
+        arrowCurve.setFill(null); // 设置曲线内部不填充颜色
 
         // 创建箭头的箭头部分
-        double arrowLength = 15; // 箭头的长度
+        double arrowLength = 18; // 箭头的长度
+        double angle = Math.atan2(endY - startY, endX - startX);
         arrowHead = new Polygon();
         arrowHead.getPoints().addAll(
                 endX - arrowLength * Math.cos(angle - Math.PI / 6), endY - arrowLength * Math.sin(angle - Math.PI / 6),
                 endX, endY,
                 endX - arrowLength * Math.cos(angle + Math.PI / 6), endY - arrowLength * Math.sin(angle + Math.PI / 6)
         );
-        arrowHead.setFill(Color.BLACK);
+        arrowHead.setFill(commonColor);
 
-        // 添加箭头的线段和箭头部分到当前Group
-        root.getChildren().addAll(arrowLine, arrowHead);
+        // 添加箭头的曲线和箭头部分到当前Group
+        root.getChildren().addAll(arrowCurve, arrowHead);
     }
-
-
+    public void disappear(){
+        root.getChildren().removeAll(arrowCurve,arrowHead);
+    }
 }

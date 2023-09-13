@@ -20,12 +20,14 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem fx:id="addResource" mnemonicParsing="false" onAction="#OnAddResource" text="add resource" />
+                <MenuItem fx:id="addResource" mnemonicParsing="false" onAction="#OnAddResource" text="add resource" />
                 <MenuItem fx:id="addProcess" mnemonicParsing="false" onAction="#OnAddProcess" text="add process" />
                 <MenuItem fx:id="addEdge" mnemonicParsing="false" onAction="#OnAddEdge" text="add edge" />
+                <MenuItem fx:id="deleteEdge" mnemonicParsing="false" onAction="#OnDeleteEdge" text="delete edge" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help" />
+          <Menu mnemonicParsing="false" text="execute" fx:id="execute" onAction="#OnExecute" />
         </menus>
       </MenuBar>
    </top>
