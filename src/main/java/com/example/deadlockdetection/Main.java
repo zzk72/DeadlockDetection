@@ -1,15 +1,11 @@
 package com.example.deadlockdetection;
 
-import atlantafx.base.theme.PrimerLight;
-
-import com.example.deadlockdetection.edge.Arrow;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
 public class Main extends Application {

@@ -16,25 +16,25 @@ public class EdgeArrowShape extends Group {
     private double startY;
     private double endX;
     private double endY;
-    String edgeType;
-    String startNodeName;
-    String endNodeName;
+    boolean isApplyEdge;
+//    String startNodeName;
+//    String endNodeName;
     BorderPane root;
     double offset;
     Color commonColor;
     Color commonApplyColor =Color.rgb(255,0,0,1);
     Color commonRequestColor=Color.rgb(0,0,255,0.8);
 
-    public EdgeArrowShape(Point startPoint, Point endPoint, String edgeType, String startNodeName, String endNodeName, BorderPane root) {
+    public EdgeArrowShape(Point startPoint, Point endPoint, boolean isApplyEdge,  BorderPane root) {
         this.startX = startPoint.getX();
         this.startY = startPoint.getY();
         this.endX = endPoint.getX();
         this.endY = endPoint.getY();
-        this.edgeType = edgeType;
-        this.startNodeName = startNodeName;
-        this.endNodeName = endNodeName;
+        this.isApplyEdge = isApplyEdge;
+//        this.startNodeName = startNodeName;
+//        this.endNodeName = endNodeName;
         this.root = root;
-        if(edgeType.equals("request")) {
+        if(isApplyEdge) {
             offset = 30;
             commonColor = commonRequestColor;
         }

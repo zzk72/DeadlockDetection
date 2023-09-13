@@ -7,6 +7,7 @@ import com.example.deadlockdetection.ProcessNode.AddProcessDialogController;
 import com.example.deadlockdetection.ProcessNode.ProcessNodeShape;
 import com.example.deadlockdetection.ResourceNode.AddResourceDialogController;
 import com.example.deadlockdetection.ResourceNode.ResourceNodeShape;
+import com.example.deadlockdetection.edge.Edge;
 import com.example.deadlockdetection.edge.EdgeArrowShape;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,9 +20,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.EventBus;
@@ -42,11 +40,13 @@ public class HomeController {
 
     private double mouseX;
     private double mouseY;
-    private ArrayList<JSONObject> node2node=new ArrayList<>();
-    private  Map<String,List<ProcessNodeShape> > res_to_Process_map=new HashMap<>();
-    private Map<String,List<ResourceNodeShape>> process_to_res_map=new HashMap<>();
-    private  Map<String,ResourceNodeShape> res_map=new HashMap<>();
-    private  Map<String,ProcessNodeShape> process_map=new HashMap<>();
+    private JSONObject node2;
+    private  Map<String,List<Edge> > res_graph =new HashMap<>();//资源分配图
+    private Map<String,List<Edge>> process_graph =new HashMap<>();//进程请求图
+    private  Map<String,ResourceNodeShape> res_map=new HashMap<>();//记录资源节点
+    private  Map<String,ProcessNodeShape> process_map=new HashMap<>();//记录进程节点
+    private  Map<String,Edge> edge_map=new HashMap<>();//记录边
+
 
     @FXML
     private MenuItem addResource;
@@ -74,7 +74,7 @@ public class HomeController {
     @FXML
     public void OnAddEdge(ActionEvent actionEvent) {
         state = ADD_EDGE_STATE1;
-        node2node.clear();
+        node2=new JSONObject();
     }
     @FXML
     void rootOnMouseClicked(MouseEvent event) throws IOException {
@@ -157,7 +157,7 @@ public class HomeController {
         ResourceNodeShape resourceNodeShape = new ResourceNodeShape(mouseX, mouseY, resName, resNum,eventBus); // 创建一个资源节点
 
         //更新资源图
-        res_to_Process_map.put(resName,new ArrayList<>());
+        res_graph.put(resName,new ArrayList<>());
         res_map.put(resName,resourceNodeShape);
         root.getChildren().add(resourceNodeShape);
     }
@@ -167,7 +167,7 @@ public class HomeController {
         ProcessNodeShape processNodeShape = new ProcessNodeShape(mouseX, mouseY, processName,eventBus); // 创建一个进程节点
 
         //更新进程图
-        process_to_res_map.put(processName,new ArrayList<>());
+        process_graph.put(processName,new ArrayList<>());
         process_map.put(processName,processNodeShape);
         root.getChildren().add(processNodeShape);
 
@@ -177,7 +177,7 @@ public class HomeController {
         //绘制边
         if(state.equals(ADD_EDGE_STATE1)){
             System.out.println("paintEdgeNode1");
-            node2node.add(data);
+            node2=data;
             state=ADD_EDGE_STATE2;
         }else if(Objects.equals(state, ADD_EDGE_STATE2)){
             System.out.println("paintEdgeNode2");
@@ -189,14 +189,12 @@ public class HomeController {
             //获取边缘上的点
             Point startMarginPoint=null;
             Point endMarginPoint=null;
-            String startNodeType=node2node.get(0).getString("nodeType");
+            String startNodeType=node2.getString("nodeType");
             String endNodeType=data.getString("nodeType");
-
             //获取startNode和endNode的相关信息
             if(startNodeType.equals("resource")&&endNodeType.equals("process")) {//分配边
-                resourceNodeShape = res_map.get(node2node.get(0).getString("resName"));
+                resourceNodeShape = res_map.get(node2.getString("resName"));
                 processNodeShape = process_map.get(data.getString("processName"));
-                res_to_Process_map.get(node2node.get(0).getString("resName")).add(processNodeShape);
 
                 //get shape center point
                 startP=new Point(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY());
@@ -206,26 +204,39 @@ public class HomeController {
                 startMarginPoint=resourceNodeShape.getNearestPoint(endP);
                 endMarginPoint=processNodeShape.getNearestPoint(startP);
 
-                //调整箭头，向上偏移
-                EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,"apply",node2node.get(0).getString("nodeType"),data.getString("nodeType"),root);
+                //调整箭头弧度
+                EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,false,root);
+                Edge edge=new Edge(node2.getString("resName"),data.getString("processName"),edgeArrowShape,resourceNodeShape,processNodeShape);
+                //store edge
+                edge_map.put(node2.getString("resName")+data.getString("processName"),edge);
+                res_graph.get(node2.getString("resName")).add(edge);
+                process_graph.get(data.getString("processName")).add(edge);
 
             } else if (startNodeType.equals("process")&&endNodeType.equals("resource")) {//申请边
                 resourceNodeShape = res_map.get(data.getString("resName"));
-                processNodeShape = process_map.get(node2node.get(0).getString("processName"));
-                process_to_res_map.get(node2node.get(0).getString("processName")).add(resourceNodeShape);
+                processNodeShape = process_map.get(node2.getString("processName"));
+
                 startP=new Point(processNodeShape.getTrueX(),processNodeShape.getTrueY());
                 endP=new Point(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY());
+
                 //获取边缘上的点
                 startMarginPoint=processNodeShape.getNearestPoint(endP);
                 endMarginPoint=resourceNodeShape.getNearestPoint(startP);
-                EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,"request",node2node.get(0).getString("nodeType"),data.getString("nodeType"),root);
+
+                //调整箭头弧度
+                EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,true,root);
+                Edge edge=new Edge(node2.getString("processName"),data.getString("resName"),edgeArrowShape,resourceNodeShape,processNodeShape);
+                //store edge
+                edge_map.put(node2.getString("processName")+data.getString("resName"),edge);
+                process_graph.get(node2.getString("processName")).add(edge);
+                res_graph.get(data.getString("resName")).add(edge);
 
             } else {
                 System.out.println("错误的边");
                 return;
             }
             //paintArrow(startMarginPoint,endMarginPoint);
-            node2node.clear();
+            node2=new JSONObject();
         }else {
             System.out.println("错误的状态 "+state);
         }
@@ -248,25 +259,50 @@ public class HomeController {
 
     //执行资源分配图约简算法
     public void OnExecute(ActionEvent actionEvent){
-        System.out.println("执行约简算法");
-        //获取资源分配图
-        Map<String,List<String>> res_to_process=new HashMap<>();
-        for(String resName:res_to_Process_map.keySet()){
-            List<String> processList=new ArrayList<>();
-            for(ProcessNodeShape processNodeShape:res_to_Process_map.get(resName)){
-                processList.add(processNodeShape.getProcessName());
+        System.out.println("执行");
+        //找到一个可满足的进程节点
+        for(ProcessNodeShape processNodeShape:process_map.values()){
+            if(checkProcessNode(processNodeShape)){
+                System.out.println(processNodeShape.getProcessName());
+                //删除该进程节点所有边
+                List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
+                for(Edge edge:edges){
+                    edge.setVisibility(false);
+                }
             }
-            res_to_process.put(resName,processList);
         }
-        //获取进程请求图
-        Map<String,List<String>> process_to_res=new HashMap<>();
-        for(String processName:process_to_res_map.keySet()){
-            List<String> resList=new ArrayList<>();
-            for(ResourceNodeShape resourceNodeShape:process_to_res_map.get(processName)){
-                resList.add(resourceNodeShape.getResName());
-            }
-            process_to_res.put(processName,resList);
-        }
+        //执行算法
+        //更新图
+        //更新图形
+        //更新状态
+        //更新菜单
+        //更新按钮
+        //更新
 
+
+    }
+    //检查一个进程节点是否可满足
+    private boolean checkProcessNode(ProcessNodeShape processNodeShape){
+        String processName=processNodeShape.getProcessName();
+        List<Edge> edges=process_graph.get(processName);
+        for(Edge edge:edges){
+            if(edge.isApplyEdge()&&edge.isShow()) {//检查该点所有申请边
+                String resName = edge.getEndNodeName();
+                ResourceNodeShape resourceNodeShape = res_map.get(resName);
+                List<Edge> resEdges = res_graph.get(resName);
+                int total = resourceNodeShape.getResNum();
+                int distribute = 0;
+                for (Edge resEdge : resEdges) {
+                    if (resEdge.isApplyEdge()&&resEdge.isShow()) {//分配边
+//                        distribute+=resEdge.getProcessNodeShape().getResNum();
+                        distribute += 1;
+                    }
+                }
+                if (total - distribute < 1) {//资源不足
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
