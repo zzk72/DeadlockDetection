@@ -13,4 +13,5 @@ public class BusMsg {
     //success
     public static final String SUCCESS="success";
 
+    public static final String DELETE_EDGE = "deleteEdge";
 }

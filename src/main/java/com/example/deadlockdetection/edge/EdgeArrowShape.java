@@ -69,8 +69,6 @@ public class EdgeArrowShape extends Group {
         root.getChildren().addAll(arrowCurve, arrowHead);
     }
     public void disappear() throws InterruptedException {
-        root.getChildren().removeAll(arrowCurve);
-        sleep(3);
-        root.getChildren().removeAll(arrowHead);
+        root.getChildren().removeAll(arrowCurve,arrowHead);
     }
 }

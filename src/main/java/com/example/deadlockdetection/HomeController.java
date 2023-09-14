@@ -47,7 +47,7 @@ public class HomeController {
     private  Map<String,ResourceNodeShape> res_map=new HashMap<>();//记录资源节点
     private  Map<String,ProcessNodeShape> process_map=new HashMap<>();//记录进程节点
     private  Map<String,Edge> edge_map=new HashMap<>();//记录边
-
+    private List<Edge> deleteEdgeList=new ArrayList<>();//记录要删除的边
 
     @FXML
     private MenuItem addResource;
@@ -273,10 +273,12 @@ public class HomeController {
                     System.out.println(processNodeShape.getProcessName());
                     processNodeShape.setVisited(true);
                     visitNum++;
-                    //删除该进程节点所有边 删除时没有更新资源节点
+                    //删除该进程节点所有边 此处应该在主线程中执行，否则UI只能在线程结束后更新
+//                    此处应该在主线程中执行，否则UI只能在线程结束后更新
                     List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
                     for(Edge edge:process_graph.get(processNodeShape.getProcessName())){
-                        edge.setVisibility(false);
+                        deleteEdgeList.add(edge);
+//                        edge.setVisibility(false);
                         System.out.println("delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName());
 
                         //返还资源
@@ -290,13 +292,10 @@ public class HomeController {
                 }
             }
         }
-        //执行算法
-        //更新图
-        //更新图形
-        //更新状态
-        //更新菜单
-        //更新按钮
-        //更新
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("visitNum",visitNum);
+        //将要删除的边发给主线程
+        eventBus.post(new MyEvent(BusMsg.DELETE_EDGE,jsonObject));
 
 
     }
