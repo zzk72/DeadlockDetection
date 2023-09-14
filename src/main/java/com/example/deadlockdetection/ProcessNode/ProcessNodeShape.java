@@ -23,7 +23,7 @@ public class ProcessNodeShape extends Group{
     private EventBus eventBus;//事件总线
     private Color commonColor=Color.rgb(140, 80, 210, 0.5);
     private Color mouseEnteredColor=Color.rgb(90, 20, 255, 0.8);
-
+    private boolean visited=false;
     public double getTrueX(){
         return centerX+transX;
     }

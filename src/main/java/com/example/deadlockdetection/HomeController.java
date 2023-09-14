@@ -29,6 +29,8 @@ import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.util.*;
 
+import static java.lang.Thread.sleep;
+
 @Data
 public class HomeController {
 
@@ -260,15 +262,31 @@ public class HomeController {
     //执行资源分配图约简算法
     public void OnExecute(ActionEvent actionEvent) throws InterruptedException {
         System.out.println("执行");
+        int visitNum=0;
+        boolean hasFree=true;//上轮循环中检测到新free的节点
+        while(hasFree){
+            hasFree=false;
         //找到一个可满足的进程节点
-        for(ProcessNodeShape processNodeShape:process_map.values()){
-            if(checkProcessNode(processNodeShape)){
-                System.out.println(processNodeShape.getProcessName());
-                //删除该进程节点所有边
-                List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
-                for(Edge edge:process_graph.get(processNodeShape.getProcessName())){
-                    edge.setVisibility(false);
-                    System.out.println("delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName());
+            for(ProcessNodeShape processNodeShape:process_map.values()){
+                if((!processNodeShape.isVisited())&&checkProcessNode(processNodeShape)){
+                    hasFree=true;
+                    System.out.println(processNodeShape.getProcessName());
+                    processNodeShape.setVisited(true);
+                    visitNum++;
+                    //删除该进程节点所有边 删除时没有更新资源节点
+                    List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
+                    for(Edge edge:process_graph.get(processNodeShape.getProcessName())){
+                        edge.setVisibility(false);
+                        System.out.println("delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName());
+
+                        //返还资源
+                        if(!edge.isApplyEdge()){
+                            System.out.println("return res");
+                            ResourceNodeShape resourceNodeShape=edge.getResourceNodeShape();
+                            resourceNodeShape.setResNum(resourceNodeShape.getResNum()+1);
+                        }
+                        sleep(1000);
+                    }
                 }
             }
         }
