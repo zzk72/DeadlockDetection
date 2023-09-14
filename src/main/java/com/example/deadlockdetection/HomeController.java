@@ -34,7 +34,6 @@ public class HomeController {
 
 
     public BorderPane borderPane;
-    public Menu execute;
     private BorderPane root;
     public EventBus eventBus;//事件总线
 
@@ -54,6 +53,7 @@ public class HomeController {
     private MenuBar menuBar;
     @FXML
     public MenuItem addEdge;
+    public MenuItem execute;
 
 
     public HomeController(){//set Event and register
@@ -256,9 +256,9 @@ public class HomeController {
     public void OnDeleteEdge(ActionEvent actionEvent) {
         state = DELETE_STATE;
     }
-
+    @FXML
     //执行资源分配图约简算法
-    public void OnExecute(ActionEvent actionEvent){
+    public void OnExecute(ActionEvent actionEvent) throws InterruptedException {
         System.out.println("执行");
         //找到一个可满足的进程节点
         for(ProcessNodeShape processNodeShape:process_map.values()){
@@ -266,8 +266,9 @@ public class HomeController {
                 System.out.println(processNodeShape.getProcessName());
                 //删除该进程节点所有边
                 List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
-                for(Edge edge:edges){
+                for(Edge edge:process_graph.get(processNodeShape.getProcessName())){
                     edge.setVisibility(false);
+                    System.out.println("delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName());
                 }
             }
         }

@@ -8,6 +8,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.QuadCurve;
 import lombok.Data;
 
+import static java.lang.Thread.sleep;
+
 @Data
 public class EdgeArrowShape extends Group {
     private QuadCurve arrowCurve;
@@ -66,7 +68,9 @@ public class EdgeArrowShape extends Group {
         // 添加箭头的曲线和箭头部分到当前Group
         root.getChildren().addAll(arrowCurve, arrowHead);
     }
-    public void disappear(){
-        root.getChildren().removeAll(arrowCurve,arrowHead);
+    public void disappear() throws InterruptedException {
+        root.getChildren().removeAll(arrowCurve);
+        sleep(3);
+        root.getChildren().removeAll(arrowHead);
     }
 }

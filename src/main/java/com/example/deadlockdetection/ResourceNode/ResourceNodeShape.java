@@ -29,7 +29,7 @@ public class ResourceNodeShape extends Group {
     private double unitSize=30;//每个资源点的大小
     private double containerSize;//容器的大小
 
-    Color commonColor=Color.rgb(150,27,10,0.8);
+    Color commonColor=Color.rgb(255,255,0,1);
     Color mouseEnteredColor=Color.rgb(255,0,0,1);
     //缩放比例
     double scale=1.1;

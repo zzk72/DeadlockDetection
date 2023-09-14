@@ -21,9 +21,13 @@ public class Edge {
         this.processNodeShape = processNodeShape;
         this.isApplyEdge = edgeArrowShape.isApplyEdge();
     }
-    public void setVisibility(boolean visibility){
+    public void setVisibility(boolean visibility) throws InterruptedException {
         isShow=visibility;
         edgeArrowShape.setVisible(visibility);
+        if(!visibility){
+            edgeArrowShape.disappear();
+        }
+        System.out.println("edge:"+startNodeName+"->"+endNodeName+" visibility:"+visibility);
     }
 
 
