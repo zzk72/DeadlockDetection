@@ -64,7 +64,7 @@ public class Main extends Application {
         //设置子组件的controller
         homeController = fxmlLoader.getController();
         homeController.setRoot(root);
-
+        //改成手动按钮的形式？
         scene = new Scene(root);
         setSceneEvent(scene);
         eventBus=homeController.getEventBus();
