@@ -2,6 +2,7 @@ package com.example.deadlockdetection.edge;
 
 import com.example.deadlockdetection.ProcessNode.ProcessNodeShape;
 import com.example.deadlockdetection.ResourceNode.ResourceNodeShape;
+import javafx.application.Platform;
 import lombok.Data;
 
 @Data
@@ -25,7 +26,13 @@ public class Edge {
         isShow=visibility;
         edgeArrowShape.setVisible(visibility);
         if(!visibility){
-            edgeArrowShape.disappear();
+            Platform.runLater(() -> {
+                try {
+                    edgeArrowShape.disappear();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
         System.out.println("edge:"+startNodeName+"->"+endNodeName+" visibility:"+visibility);
     }

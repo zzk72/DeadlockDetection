@@ -5,7 +5,10 @@ import com.example.deadlockdetection.Config.MyEvent;
 import com.example.deadlockdetection.edge.Edge;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
@@ -14,6 +17,8 @@ import javafx.stage.Stage;
 import net.sf.json.JSONObject;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -80,13 +85,36 @@ public class Main extends Application {
             deleteEdge();
         }
     }
-    private void deleteEdge() throws InterruptedException {
-        for(Edge edge:homeController.getDeleteEdgeList()){
-            System.out.println("delete edge:"+edge.getStartNodeName()+"->"+edge.getEndNodeName());
-            edge.setVisibility(false);
-            sleep(1000);
-        }
+//    private void deleteEdge() throws InterruptedException {
+//
+//        for(Edge edge:homeController.getDeleteEdgeList()){
+//            System.out.println("delete edge:"+edge.getStartNodeName()+"->"+edge.getEndNodeName());
+//            edge.setVisibility(false);
+//            Thread.sleep(1000);
+//        }
+//    }
+private void deleteEdge() throws InterruptedException {
+    List<Edge> edgesToDelete = new ArrayList<>(homeController.getDeleteEdgeList());
+
+    for (Edge edge : edgesToDelete) {
+        System.out.println("delete edge:" + edge.getStartNodeName() + "->" + edge.getEndNodeName());
+      //  edge.setVisibility(false);
+
+        // 使用Platform.runLater在JavaFX UI线程上执行删除操作
+        Platform.runLater(() -> {
+            try {
+                edge.setVisibility(false);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            // 删除边的相关UI操作
+            // 如果需要，可以在这里执行其他与UI相关的操作
+        });
+
+        Thread.sleep(1000); // 休眠1秒
     }
+}
+
     public static void main(String[] args) {
         launch();
     }

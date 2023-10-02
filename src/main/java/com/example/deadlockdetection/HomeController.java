@@ -38,6 +38,7 @@ public class HomeController {
     public BorderPane borderPane;
     private BorderPane root;
     public EventBus eventBus;//事件总线
+    private boolean hasDeleteEdge=false;
 
     private double mouseX;
     private double mouseY;
@@ -274,11 +275,11 @@ public class HomeController {
                     processNodeShape.setVisited(true);
                     visitNum++;
                     //删除该进程节点所有边 此处应该在主线程中执行，否则UI只能在线程结束后更新
-//                    此处应该在主线程中执行，否则UI只能在线程结束后更新
+                    // 此处应该在主线程中执行，否则UI只能在线程结束后更新
                     List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
                     for(Edge edge:process_graph.get(processNodeShape.getProcessName())){
                         deleteEdgeList.add(edge);
-//                        edge.setVisibility(false);
+                    //  edge.setVisibility(false);
                         System.out.println("delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName());
 
                         //返还资源
@@ -287,15 +288,16 @@ public class HomeController {
                             ResourceNodeShape resourceNodeShape=edge.getResourceNodeShape();
                             resourceNodeShape.setResNum(resourceNodeShape.getResNum()+1);
                         }
-                        sleep(1000);
+                        //sleep(1000);
                     }
                 }
             }
         }
+        hasDeleteEdge=true;
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("visitNum",visitNum);
         //将要删除的边发给主线程
-        eventBus.post(new MyEvent(BusMsg.DELETE_EDGE,jsonObject));
+       // eventBus.post(new MyEvent(BusMsg.DELETE_EDGE,jsonObject));
 
 
     }
@@ -322,5 +324,19 @@ public class HomeController {
             }
         }
         return true;
+    }
+
+    public void OnExeStep(ActionEvent actionEvent) throws InterruptedException {
+        if(!hasDeleteEdge){
+            OnExecute(actionEvent);
+        }
+        if(deleteEdgeList.size()>0){
+            Edge edge=deleteEdgeList.get(0);
+            deleteEdgeList.remove(0);
+            edge.setVisibility(false);
+        }else{
+            System.out.println("执行完毕");
+        }
+
     }
 }

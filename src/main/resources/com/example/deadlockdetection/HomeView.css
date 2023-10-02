@@ -1,6 +1,14 @@
 /* */
 .root {
     -fx-background-radius: 10;
+    background-image:
+            linear-gradient(darkslategrey,darkolivegreen) 7px 0,
+                /*linear-gradient( #999 50%, #999 50%),*/
+                /*linear-gradient( #999 50%, #999 50%),*/
+            #444;
+    -fx-background-size: 100% 100%; /* 背景尺寸 */
+    -fx-background-repeat: repeat; /* 背景重复方式 */
+
 }
 /* 设置整个界面的背景 */
 #borderPane {

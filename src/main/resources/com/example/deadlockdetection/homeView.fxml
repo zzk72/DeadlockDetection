@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 
-<?import java.net.URL?>
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            onMouseClicked="#rootOnMouseClicked" prefHeight="582.0" prefWidth="837.0"
-            xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.deadlockdetection.HomeController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#rootOnMouseClicked" prefHeight="582.0" prefWidth="837.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.HomeController">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
@@ -24,11 +21,15 @@
                 <MenuItem fx:id="addProcess" mnemonicParsing="false" onAction="#OnAddProcess" text="add process" />
                 <MenuItem fx:id="addEdge" mnemonicParsing="false" onAction="#OnAddEdge" text="add edge" />
                 <MenuItem fx:id="deleteEdge" mnemonicParsing="false" onAction="#OnDeleteEdge" text="delete edge" />
-                <MenuItem mnemonicParsing="false" text="execute" fx:id="execute" onAction="#OnExecute" />
+                <MenuItem fx:id="execute" mnemonicParsing="false" onAction="#OnExecute" text="execute" />
 
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help" />
+          <Menu mnemonicParsing="false" text="Exe" >
+            <items>
+              <MenuItem fx:id="exeStep" mnemonicParsing="false" onAction="#OnExeStep" text="step" />
+            </items>
+          </Menu>
         </menus>
       </MenuBar>
    </top>
