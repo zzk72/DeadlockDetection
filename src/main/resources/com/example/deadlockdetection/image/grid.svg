@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1000">
+    <!-- 定义网格线的颜色和宽度 -->
+    <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0, 0, 0, 0.5)" stroke-width="1"/>
+        </pattern>
+    </defs>
+
+    <!-- 使用网格图案填充整个SVG画布 -->
+    <rect width="100%" height="100%" fill="url(#grid)" />
+</svg>

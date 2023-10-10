@@ -9,6 +9,8 @@ import com.example.deadlockdetection.ResourceNode.AddResourceDialogController;
 import com.example.deadlockdetection.ResourceNode.ResourceNodeShape;
 import com.example.deadlockdetection.edge.Edge;
 import com.example.deadlockdetection.edge.EdgeArrowShape;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +25,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.EventBus;
+import javafx.util.Duration;
 import lombok.Data;
 import net.sf.json.JSONObject;
 
@@ -259,28 +262,28 @@ public class HomeController {
     public void OnDeleteEdge(ActionEvent actionEvent) {
         state = DELETE_STATE;
     }
-    @FXML
-    //执行资源分配图约简算法
-    public void OnExecute(ActionEvent actionEvent) throws InterruptedException {
-        System.out.println("执行");
+
+    private void getDeleteEdge(){
+        System.out.println("约简资源分配图 getDeleteEdge");
+        if(hasDeleteEdge){
+            deleteEdgeList.clear();
+        }
         int visitNum=0;
         boolean hasFree=true;//上轮循环中检测到新free的节点
         while(hasFree){
             hasFree=false;
-        //找到一个可满足的进程节点
+            //找到一个可满足的进程节点
             for(ProcessNodeShape processNodeShape:process_map.values()){
                 if((!processNodeShape.isVisited())&&checkProcessNode(processNodeShape)){
                     hasFree=true;
                     System.out.println(processNodeShape.getProcessName());
                     processNodeShape.setVisited(true);
                     visitNum++;
-                    //删除该进程节点所有边 此处应该在主线程中执行，否则UI只能在线程结束后更新
-                    // 此处应该在主线程中执行，否则UI只能在线程结束后更新
+                    //删除该进程节点所有边
                     List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
                     for(Edge edge:process_graph.get(processNodeShape.getProcessName())){
                         deleteEdgeList.add(edge);
-                    //  edge.setVisibility(false);
-                        System.out.println("delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName());
+                        System.out.println("add delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName()+"to deleteEdgeList");
 
                         //返还资源
                         if(!edge.isApplyEdge()){
@@ -288,17 +291,41 @@ public class HomeController {
                             ResourceNodeShape resourceNodeShape=edge.getResourceNodeShape();
                             resourceNodeShape.setResNum(resourceNodeShape.getResNum()+1);
                         }
-                        //sleep(1000);
                     }
                 }
             }
         }
         hasDeleteEdge=true;
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("visitNum",visitNum);
-        //将要删除的边发给主线程
-       // eventBus.post(new MyEvent(BusMsg.DELETE_EDGE,jsonObject));
 
+    }
+
+    @FXML
+    //执行资源分配图约简算法
+    public void OnExecute(ActionEvent actionEvent) throws InterruptedException {
+        //约简资源分配图
+        if(!hasDeleteEdge){
+            getDeleteEdge();
+        }
+        //执行删除边动画
+        playDeleteEdgeList();
+    }
+    private void playDeleteEdgeList() throws InterruptedException {//设置时间轴，每隔1秒删除一条边
+        Timeline timeline = new Timeline();
+        Duration duration = Duration.millis(1000);
+        int i=1;
+        for(Edge edge:deleteEdgeList){
+            System.out.println("delete edge:"+edge.getStartNodeName()+"->"+edge.getEndNodeName());
+            KeyFrame keyFrame = new KeyFrame(duration.multiply(i++)
+                    , e -> {
+                try {
+                    edge.setVisibility(false);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+            });
+            timeline.getKeyFrames().add(keyFrame);
+        }
+        timeline.play();
 
     }
     //检查一个进程节点是否可满足
@@ -326,9 +353,10 @@ public class HomeController {
         return true;
     }
 
+    @FXML
     public void OnExeStep(ActionEvent actionEvent) throws InterruptedException {
         if(!hasDeleteEdge){
-            OnExecute(actionEvent);
+            getDeleteEdge();
         }
         if(deleteEdgeList.size()>0){
             Edge edge=deleteEdgeList.get(0);

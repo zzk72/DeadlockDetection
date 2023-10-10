@@ -1,19 +1,18 @@
 /* */
 .root {
     -fx-background-radius: 10;
-    background-image:
-            linear-gradient(darkslategrey,darkolivegreen) 7px 0,
-                /*linear-gradient( #999 50%, #999 50%),*/
-                /*linear-gradient( #999 50%, #999 50%),*/
-            #444;
-    -fx-background-size: 100% 100%; /* 背景尺寸 */
-    -fx-background-repeat: repeat; /* 背景重复方式 */
+
 
 }
 /* 设置整个界面的背景 */
 #borderPane {
-    -fx-background-color: #fdfdfd; /* 背景 */
+    -fx-background-color: white; /* 背景颜色 */
+    -fx-background-image: url('image/grid.png'); /* 使用包含网格背景的图片 */
+    /*背景尺寸设置为自动调整*/
+    -fx-background-size: 1500px 1000px;
+    -fx-background-repeat: repeat; /* 背景重复方式 */
 }
+
 
 /* 设置菜单栏的样式 */
 #menuBar {
@@ -54,3 +53,4 @@
 .menu-item:pressed {
     /*-fx-background-color: #4D9253; !* 点击效果的背景颜色 *!*/
 }
+
