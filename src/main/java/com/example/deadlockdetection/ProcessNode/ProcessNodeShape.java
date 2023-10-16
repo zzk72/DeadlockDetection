@@ -66,7 +66,8 @@ public class ProcessNodeShape extends Group{
                 System.out.println("processNodeShape clicked and post a message");
             }
         });
-        //鼠标停止拖拽时，更新图形的中心点坐标
+
+        // 鼠标停止拖拽时，更新图形的中心点坐标
 //        this.setOnMouseReleased(new EventHandler<MouseEvent>() {
 //            @Override
 //            public void handle(MouseEvent event) {

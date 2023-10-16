@@ -231,6 +231,7 @@ public class HomeController {
 
                 //调整箭头弧度
                 EdgeArrowShape edgeArrowShape=new EdgeArrowShape(startMarginPoint,endMarginPoint,true,root);
+                eventBus.register(edgeArrowShape);
                 Edge edge=new Edge(node2.getString("processName"),data.getString("resName"),edgeArrowShape,resourceNodeShape,processNodeShape);
                 //store edge
                 edge_map.put(node2.getString("processName")+data.getString("resName"),edge);
@@ -244,7 +245,7 @@ public class HomeController {
             //paintArrow(startMarginPoint,endMarginPoint);
             node2=new JSONObject();
         }else {
-            System.out.println("错误的状态 "+state);
+            System.out.println("带扩展状态 "+state);
         }
 
     }
@@ -274,13 +275,14 @@ public class HomeController {
             hasFree=false;
             //找到一个可满足的进程节点
             for(ProcessNodeShape processNodeShape:process_map.values()){
+
                 if((!processNodeShape.isVisited())&&checkProcessNode(processNodeShape)){
                     hasFree=true;
                     System.out.println(processNodeShape.getProcessName());
                     processNodeShape.setVisited(true);
                     visitNum++;
+
                     //删除该进程节点所有边
-                    List<Edge> edges=process_graph.get(processNodeShape.getProcessName());
                     for(Edge edge:process_graph.get(processNodeShape.getProcessName())){
                         deleteEdgeList.add(edge);
                         System.out.println("add delete edge "+edge.getStartNodeName()+" "+edge.getEndNodeName()+"to deleteEdgeList");
@@ -333,6 +335,7 @@ public class HomeController {
         String processName=processNodeShape.getProcessName();
         List<Edge> edges=process_graph.get(processName);
         for(Edge edge:edges){
+
             if(edge.isApplyEdge()&&edge.isShow()) {//检查该点所有申请边
                 String resName = edge.getEndNodeName();
                 ResourceNodeShape resourceNodeShape = res_map.get(resName);
