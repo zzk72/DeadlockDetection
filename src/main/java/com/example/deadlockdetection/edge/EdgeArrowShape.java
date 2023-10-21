@@ -11,7 +11,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.QuadCurve;
 import lombok.Data;
 
-import static java.lang.Thread.sleep;
 
 @Data
 public class EdgeArrowShape extends Group {
@@ -73,7 +72,6 @@ public class EdgeArrowShape extends Group {
     public void disappear() throws InterruptedException {
         root.getChildren().removeAll(arrowCurve,arrowHead);
     }
-    @Subscribe
     public void setVisibility(MyEvent myEvent) throws InterruptedException {
         System.out.println("edgeArrowShape received a message");
         if(myEvent.getType().equals("edgeVisibility")){

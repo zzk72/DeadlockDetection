@@ -6,13 +6,15 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#rootOnMouseClicked" prefHeight="582.0" prefWidth="837.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.deadlockdetection.HomeController">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem fx:id="clear" mnemonicParsing="false" onAction="#OnClear" text="clear" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -21,19 +23,25 @@
                 <MenuItem fx:id="addProcess" mnemonicParsing="false" onAction="#OnAddProcess" text="add process" />
                 <MenuItem fx:id="addEdge" mnemonicParsing="false" onAction="#OnAddEdge" text="add edge" />
                 <MenuItem fx:id="deleteEdge" mnemonicParsing="false" onAction="#OnDeleteEdge" text="delete edge" />
-                <MenuItem fx:id="execute" mnemonicParsing="false" onAction="#OnExecute" text="execute" />
 
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Exe" >
             <items>
-              <MenuItem fx:id="exeStep" mnemonicParsing="false" onAction="#OnExeStep" text="step" />
+                <MenuItem fx:id="exeStep" mnemonicParsing="false" onAction="#OnExeStep" text="step" />
+                <MenuItem fx:id="execute" mnemonicParsing="false" onAction="#OnExecute" text="auto" />
+                <MenuItem fx:id="init" mnemonicParsing="false" onAction="#OnInit" text="init" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
    </top>
-
+    <bottom>
+        <HBox fx:id="statusBar" alignment="CENTER_RIGHT">
+            <!-- This is your status bar -->
+            <Label fx:id="statusLabel" text="Status: Ready" />
+        </HBox>
+    </bottom>
     <stylesheets>
         <URL value="@HomeView.css" />
     </stylesheets>

@@ -17,8 +17,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.util.Duration;
 
-import static java.lang.Thread.sleep;
-
 public class Main extends Application {
     private double mouseX;//相对于root的坐标
     private double mouseY;//相对于root的坐标

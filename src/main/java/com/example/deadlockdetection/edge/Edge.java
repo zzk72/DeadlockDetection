@@ -14,6 +14,7 @@ public class Edge {
     private ProcessNodeShape processNodeShape=null;
     private boolean isApplyEdge;
     private boolean isShow=true;
+    private int timeStep;
     public Edge(String startNodeName, String endNodeName, EdgeArrowShape edgeArrowShape, ResourceNodeShape resourceNodeShape, ProcessNodeShape processNodeShape) {
         this.startNodeName = startNodeName;
         this.endNodeName = endNodeName;

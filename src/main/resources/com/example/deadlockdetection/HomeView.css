@@ -54,3 +54,21 @@
     /*-fx-background-color: #4D9253; !* 点击效果的背景颜色 *!*/
 }
 
+#statusBar{
+    /*设置大小*/
+    -fx-min-height: 50px;
+    -fx-max-height: 50px;
+
+}
+#statusBar .label{
+    -fx-background-color: white;
+    -fx-text-fill: #606060; /*文字颜色 */
+    -fx-font-size: 15px; /* 字体大小 */
+    -fx-font-family: "Segoe UI"; /* 字体 */
+    /*大小*/
+    -fx-min-width: 200px;
+    -fx-min-height: 30px;
+    -fx-alignment: bottom-right;
+
+
+}
