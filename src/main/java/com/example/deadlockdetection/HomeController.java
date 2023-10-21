@@ -23,6 +23,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.QuadCurve;
 import javafx.stage.Stage;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.EventBus;
@@ -384,9 +386,7 @@ public class HomeController {
         }
 
     }
-
-    @FXML
-    public  void OnClear(ActionEvent actionEvent) {
+    private void clearAll(){
         //清空所有数据
         res_graph.clear();
         process_graph.clear();
@@ -395,16 +395,23 @@ public class HomeController {
         edge_map.clear();
         deleteEdgeList.clear();
         hasDeleteEdge=false;
-        //清空所有节点 保留菜单栏
-        root.getChildren().removeIf(node -> node instanceof ResourceNodeShape || node instanceof ProcessNodeShape || node instanceof EdgeArrowShape);
-
+        //清空所有资源节点
+        root.getChildren().removeIf(node -> node instanceof ResourceNodeShape);
+        //清空所有进程节点
+        root.getChildren().removeIf(node -> node instanceof ProcessNodeShape);
+        //清空所有边
+        root.getChildren().removeIf(node -> node instanceof QuadCurve);
+        root.getChildren().removeIf(node -> node instanceof Polygon);
         //清空所有状态
         state = OFF_STATE;
     }
     @FXML
+    public  void OnClear(ActionEvent actionEvent) {
+        clearAll();
+    }
+    @FXML
     public void OnInit(ActionEvent actionEvent) throws IOException {
-        OnClear(actionEvent);
-
+        clearAll();
         //初始化一个资源分配图，包含3个资源节点和3个进程节点
 
         //绘制资源节点
