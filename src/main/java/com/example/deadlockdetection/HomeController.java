@@ -15,7 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -23,8 +25,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.QuadCurve;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.EventBus;
@@ -34,6 +37,7 @@ import net.sf.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 
 @Data
@@ -189,6 +193,15 @@ public class HomeController {
 
     }
 
+    private int getDistributeNum(String resName){
+        int distribute=0;
+        for(Edge edge:res_graph.get(resName)){
+            if((!edge.isApplyEdge())&&(edge.isShow())){//分配边
+                distribute+=1;
+            }
+        }
+        return distribute;
+    }
     public void paintEdgeNode(JSONObject data){
         updateStatusLabel("paintEdgeNode");
         //绘制边
@@ -212,6 +225,21 @@ public class HomeController {
             if(startNodeType.equals("resource")&&endNodeType.equals("process")) {//分配边
                 resourceNodeShape = res_map.get(node2.getString("resName"));
                 processNodeShape = process_map.get(data.getString("processName"));
+                //检查资源是否足够
+                //获取已有的分配边数量
+                int total=resourceNodeShape.getResNum();
+                int distribute=getDistributeNum(node2.getString("resName"));
+                if(total-distribute<=0){
+                    updateStatusLabel("资源不足");
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("警告");
+                    alert.setHeaderText("资源不足，无法分配");
+                    alert.setContentText("分配边数量超过资源数量！");
+                    alert.showAndWait();
+
+                    return;
+                }
+
 
                 //get shape center point
                 startP=new Point(resourceNodeShape.getTrueX(),resourceNodeShape.getTrueY());
@@ -321,6 +349,18 @@ public class HomeController {
         if(!hasDeleteEdge){
             getDeleteEdge();
         }
+        if(deleteEdgeList.size()!=edge_map.size()){
+            updateStatusLabel("不可完全约简");
+            //弹出提示框，提示不可完全约简
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("提示");
+            alert.setHeaderText("不可完全约简");
+            alert.setContentText("资源分配图无法完全约简，可能发生死锁。");
+            alert.showAndWait();
+
+
+            return;
+        }
         //执行删除边动画
         playDeleteEdgeList();
     }
@@ -352,6 +392,7 @@ public class HomeController {
         for(Edge edge:edges){
 
             if(edge.isApplyEdge()&&edge.isShow()) {//检查该点所有申请边
+
                 String resName = edge.getEndNodeName();
                 ResourceNodeShape resourceNodeShape = res_map.get(resName);
                 List<Edge> resEdges = res_graph.get(resName);
@@ -359,12 +400,13 @@ public class HomeController {
                 int distribute = 0;
 //                int distribute = 1;
                 for (Edge resEdge : resEdges) {
-                    if (resEdge.isApplyEdge()&&resEdge.isShow()) {//分配边
+
+                    if ((!resEdge.isApplyEdge())&&resEdge.isShow()) {//分配边
 //                        distribute+=resEdge.getProcessNodeShape().getResNum();
                         distribute += 1;
                     }
                 }
-                if (total - distribute < 0) {//资源不足 应<0，因为该进程节点本身也有申请边
+                if (total - distribute < 1) {//资源不足 应<1，因为该进程节点本身需要一个边
                     return false;
                 }
             }
@@ -387,6 +429,9 @@ public class HomeController {
 
     }
     private void clearAll(){
+
+        //清空所有状态
+        state = OFF_STATE;
         //清空所有数据
         res_graph.clear();
         process_graph.clear();
@@ -395,15 +440,10 @@ public class HomeController {
         edge_map.clear();
         deleteEdgeList.clear();
         hasDeleteEdge=false;
-        //清空所有资源节点
-        root.getChildren().removeIf(node -> node instanceof ResourceNodeShape);
-        //清空所有进程节点
-        root.getChildren().removeIf(node -> node instanceof ProcessNodeShape);
-        //清空所有边
-        root.getChildren().removeIf(node -> node instanceof QuadCurve);
-        root.getChildren().removeIf(node -> node instanceof Polygon);
-        //清空所有状态
-        state = OFF_STATE;
+        root.getChildren().removeIf(node ->
+                (!(node instanceof MenuBar))&&(!(node instanceof HBox))&&(!(node instanceof Label))&&(!(node instanceof BorderPane))
+        );
+
     }
     @FXML
     public  void OnClear(ActionEvent actionEvent) {

@@ -20,7 +20,7 @@ public class ProcessNodeShape extends Group{
     private double scale=1.1;//缩放比例
     private double circleRadius=20;//圆的半径
     private String processName;
-    private EventBus eventBus;//事件总线
+//    private EventBus eventBus;//事件总线
     private Color commonColor=Color.rgb(140, 80, 210, 0.5);
     private Color mouseEnteredColor=Color.rgb(90, 20, 255, 0.8);
     private boolean visited=false;

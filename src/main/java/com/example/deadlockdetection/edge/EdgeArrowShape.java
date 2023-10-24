@@ -38,11 +38,11 @@ public class EdgeArrowShape extends Group {
 //        this.endNodeName = endNodeName;
         this.root = root;
         if(isApplyEdge) {
-            offset = 30;
+            offset = 10;
             commonColor = commonRequestColor;
         }
         else {
-            offset = -30;
+            offset = -10;
             commonColor = commonApplyColor;
         }
         createArrow();

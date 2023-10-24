@@ -24,7 +24,7 @@ public class ResourceNodeShape extends Group {
     double transY=0;
     private String resName;
     private int resNum;
-    private EventBus eventBus;//事件总线
+//    private EventBus eventBus;//事件总线
 
     private double unitSize=30;//每个资源点的大小
     private double containerSize;//容器的大小
@@ -41,8 +41,7 @@ public class ResourceNodeShape extends Group {
         this.centerY = centerY;
         this.resName = resName;
         this.resNum = resNum;
-        this.eventBus=eventBus;
-        eventBus.register(this);
+//        this.eventBus=eventBus;
         createResourceNode();
 
         //鼠标拖拽时移动图形
