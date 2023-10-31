@@ -1,12 +1,6 @@
 package com.example.deadlockdetection;
 
-import com.example.deadlockdetection.Config.BusMsg;
-import com.example.deadlockdetection.Config.MyEvent;
-import com.example.deadlockdetection.edge.Edge;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -15,7 +9,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import javafx.util.Duration;
 
 public class Main extends Application {
     private double mouseX;//相对于root的坐标

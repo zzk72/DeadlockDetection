@@ -1,4 +1,4 @@
-package com.example.deadlockdetection.Config;
+package com.example.deadlockdetection.Utilities;
 
 public class BusMsg {
     public static final String ADD_RESOURCE="addResource";

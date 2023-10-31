@@ -1,7 +1,7 @@
 package com.example.deadlockdetection.ResourceNode;
 
-import com.example.deadlockdetection.Config.BusMsg;
-import com.example.deadlockdetection.Config.MyEvent;
+import com.example.deadlockdetection.Utilities.BusMsg;
+import com.example.deadlockdetection.Utilities.MyEvent;
 import com.google.common.eventbus.EventBus;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

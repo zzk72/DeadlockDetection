@@ -1,9 +1,8 @@
 package com.example.deadlockdetection.ProcessNode;
 
-import com.example.deadlockdetection.Config.BusMsg;
-import com.example.deadlockdetection.Config.MyEvent;
+import com.example.deadlockdetection.Utilities.BusMsg;
+import com.example.deadlockdetection.Utilities.MyEvent;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -11,8 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import net.sf.json.JSONObject;
-
-import java.util.Objects;
 
 public class AddProcessDialogController {
     EventBus eventBus;

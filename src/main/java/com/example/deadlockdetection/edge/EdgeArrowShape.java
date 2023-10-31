@@ -1,9 +1,7 @@
 package com.example.deadlockdetection.edge;
 
-import com.example.deadlockdetection.Config.MyEvent;
-import com.example.deadlockdetection.Config.Point;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import com.example.deadlockdetection.Utilities.MyEvent;
+import com.example.deadlockdetection.Utilities.Point;
 import javafx.scene.Group;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;

@@ -1,20 +1,17 @@
 package com.example.deadlockdetection.ResourceNode;
-import com.example.deadlockdetection.Config.BusMsg;
-import com.example.deadlockdetection.Config.MyEvent;
-import com.example.deadlockdetection.Config.Point;
+import com.example.deadlockdetection.Utilities.BusMsg;
+import com.example.deadlockdetection.Utilities.MyEvent;
+import com.example.deadlockdetection.Utilities.Point;
 import com.google.common.eventbus.EventBus;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import lombok.Data;
 import net.sf.json.JSONObject;
-import java.util.List;
 
 @Data
 public class ResourceNodeShape extends Group {

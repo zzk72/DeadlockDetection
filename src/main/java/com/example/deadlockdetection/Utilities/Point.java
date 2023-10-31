@@ -1,4 +1,4 @@
-package com.example.deadlockdetection.Config;
+package com.example.deadlockdetection.Utilities;
 
 public class Point {
     private double x;
